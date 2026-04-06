@@ -378,586 +378,183 @@
       animation: radar 4s linear infinite;
     }
     .sat-body::after {
-      content: ''; position: absolute; top: 50%; left: 50%;      --font-display:     'Barlow Condensed', sans-serif;
-      --font-body:        'Barlow', sans-serif;
-      --radius-sm:        8px;
-      --radius-md:        14px;
-      --radius-lg:        22px;
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 400px; height: 400px; border-radius: 50%;
+      border: 1px solid rgba(34,197,94,0.05);
+      animation: radar 4s linear 1.5s infinite;
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-    body {
-      background-color: var(--bg-base);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 16px;
-      line-height: 1.65;
-      overflow-x: hidden;
+    @keyframes radar {
+      0%   { transform: translate(-50%,-50%) scale(0.4); opacity: 0.8; }
+      100% { transform: translate(-50%,-50%) scale(1.3); opacity: 0; }
     }
-    a { color: inherit; text-decoration: none; }
-    img { display: block; max-width: 100%; }
-
-    /* Background glow + grid */
-    body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(249,115,22,0.07) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(34,197,94,0.05) 0%, transparent 60%),
-        linear-gradient(180deg, #020617 0%, #03091a 100%);
+    .sat-icon {
+      position: relative; z-index: 1; width: 88px; height: 88px; border-radius: 50%;
+      background: var(--green-dim); border: 2px solid rgba(34,197,94,0.3);
+      display: flex; align-items: center; justify-content: center; font-size: 38px;
+      box-shadow: 0 0 32px var(--green-glow);
     }
-    body::after {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.016) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.016) 1px, transparent 1px);
-      background-size: 60px 60px;
-    }
-
-    .wrap {
+    .sat-headline {
       position: relative; z-index: 1;
-      width: 100%; max-width: 1240px;
-      margin: 0 auto; padding: 0 24px;
+      font-family: var(--font-display); font-weight: 900;
+      font-size: clamp(1.6rem, 4vw, 2.8rem); text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--text-primary); line-height: 1.05;
     }
-    .section    { padding: 96px 0; }
-    .section-sm { padding: 48px 0; }
-
-    /* ============================================================ NAV */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      padding: 0 24px;
-      background: rgba(2,6,23,0.88);
-      backdrop-filter: blur(20px) saturate(180%);
-      border-bottom: 1px solid var(--border-dim);
-    }
-    .nav-inner {
-      max-width: 1240px; margin: 0 auto;
+    .sat-headline .sat-date { display: block; color: var(--orange-light); font-size: clamp(1.1rem, 2.5vw, 1.8rem); letter-spacing: 0.08em; margin-top: 6px; }
+    .sat-sub { position: relative; z-index: 1; font-size: 15px; color: var(--text-muted); max-width: 44ch; line-height: 1.6; }
+    .sat-footer {
       display: flex; align-items: center; justify-content: space-between;
-      height: 60px; gap: 24px;
+      padding: 14px 22px; background: var(--bg-surface);
+      border-top: 1px solid var(--border-dim); gap: 12px; flex-wrap: wrap;
     }
-    .nav-brand { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
-    .nav-brand span { color: var(--orange); }
-    .nav-links { display: flex; align-items: center; gap: 4px; }
-    .nav-links a {
-      font-family: var(--font-display); font-weight: 600; font-size: 14px;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--text-secondary); padding: 6px 12px;
-      border-radius: var(--radius-sm); transition: color 0.2s, background 0.2s;
-    }
-    .nav-links a:hover { color: var(--text-primary); background: var(--border-dim); }
+    .sat-coord { font-family: monospace; font-size: 13px; color: var(--text-muted); }
 
-    /* ============================================================ LIVE PILL */
-    .live-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 14px 6px 10px; border-radius: 999px;
-      background: var(--green-dim); border: 1px solid rgba(34,197,94,0.28);
-      font-family: var(--font-display); font-size: 13px; font-weight: 600;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--green-light); white-space: nowrap;
-    }
-    .live-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: var(--green);
-      box-shadow: 0 0 0 0 var(--green-glow);
-      animation: pulse-dot 2s ease-out infinite; flex-shrink: 0;
-    }
-    @keyframes pulse-dot {
-      0%  { box-shadow: 0 0 0 0 var(--green-glow); }
-      60% { box-shadow: 0 0 0 8px transparent; }
-      100%{ box-shadow: 0 0 0 0 transparent; }
-    }
-
-    /* ============================================================ BUTTONS */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 14px 28px; border-radius: var(--radius-md);
-      font-family: var(--font-display); font-weight: 700; font-size: 16px;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      border: none; cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .btn-orange { background: var(--orange); color: #fff; box-shadow: 0 4px 24px var(--orange-dim); }
-    .btn-orange:hover { background: var(--orange-light); box-shadow: 0 8px 32px var(--orange-glow); }
-    .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-mid); }
-    .btn-ghost:hover { color: var(--text-primary); border-color: var(--border-bright); background: var(--border-dim); }
-
-    /* ============================================================ SECTION HEADERS */
-    .section-header { margin-bottom: 48px; }
-    .section-kicker {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--font-display); font-size: 12px; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px;
-    }
-    .section-kicker::before { content: ''; display: block; width: 20px; height: 2px; background: var(--orange); }
-    .section-title {
-      font-family: var(--font-display); font-weight: 900;
-      font-size: clamp(2.5rem, 5vw, 4rem); line-height: 0.95;
-      text-transform: uppercase; letter-spacing: -0.01em;
-      color: var(--text-primary); margin-bottom: 16px;
-    }
-    .section-desc { font-size: 17px; color: var(--text-secondary); max-width: 60ch; line-height: 1.7; }
-
-    /* ============================================================ HERO */
-    .hero { padding: 80px 0 72px; position: relative; z-index: 1; }
-    .hero-eyebrow {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
-      animation: fade-up 0.5s ease both 0.05s;
-    }
-    .tag-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px; border-radius: 999px;
-      background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.22);
-      font-family: var(--font-display); font-size: 12px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange-light);
-    }
-    .hero-headline {
-      font-family: var(--font-display); font-weight: 900;
-      font-size: clamp(4rem, 10vw, 9rem); line-height: 0.92;
-      letter-spacing: -0.01em; text-transform: uppercase; color: var(--text-primary);
-      margin-bottom: 12px; max-width: 14ch;
-      animation: fade-up 0.6s ease both 0.15s;
-    }
-    .hero-headline em { font-style: italic; color: var(--orange); }
-    .hero-sub {
-      font-family: var(--font-display); font-weight: 700;
-      font-size: clamp(1.4rem, 3.5vw, 2.4rem); letter-spacing: 0.05em;
-      text-transform: uppercase; color: var(--text-secondary); margin-bottom: 32px;
-      animation: fade-up 0.6s ease both 0.25s;
-    }
-    .hero-sub span { color: var(--orange-light); }
-    .hero-meta {
-      display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px;
-      animation: fade-up 0.5s ease both 0.35s;
-    }
-    .meta-chip {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 16px; border-radius: var(--radius-sm);
+    /* ====================================================================
+       ⑤ THE STORY — About the Runner
+    ==================================================================== */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+    .about-portrait {
+      position: relative; border-radius: var(--radius-lg); overflow: hidden;
       background: var(--bg-card); border: 1px solid var(--border-mid);
-      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+      aspect-ratio: 4/5; display: flex; align-items: center; justify-content: center;
     }
-    .hero-cta-row { display: flex; flex-wrap: wrap; gap: 12px; animation: fade-up 0.5s ease both 0.45s; }
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .about-portrait::before {
+      content: ''; position: absolute; top: -2px; left: -2px; width: 60px; height: 60px;
+      border-top: 3px solid var(--orange); border-left: 3px solid var(--orange);
+      border-radius: var(--radius-sm) 0 0 0; z-index: 2;
     }
+    .about-portrait::after {
+      content: ''; position: absolute; bottom: -2px; right: -2px; width: 60px; height: 60px;
+      border-bottom: 3px solid var(--orange); border-right: 3px solid var(--orange);
+      border-radius: 0 0 var(--radius-sm) 0; z-index: 2;
+    }
+    .portrait-placeholder { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; text-align: center; }
+    .portrait-placeholder .portrait-icon { font-size: 64px; line-height: 1; }
+    .portrait-placeholder p { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+    .about-origin-tag {
+      position: absolute; bottom: 20px; left: 20px; z-index: 3;
+      display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+      background: rgba(2,6,23,0.85); border: 1px solid var(--border-mid); backdrop-filter: blur(10px);
+      font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);
+    }
+    .about-story { font-size: 17px; color: var(--text-secondary); line-height: 1.8; }
+    .about-story p + p { margin-top: 20px; }
+    .about-story strong { color: var(--text-primary); font-weight: 600; }
+    .about-pull-quote {
+      margin: 32px 0; padding: 28px 32px;
+      border-left: 3px solid var(--orange); background: var(--bg-card);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      position: relative; overflow: hidden;
+    }
+    .about-pull-quote::before {
+      content: '\201C'; position: absolute; top: -10px; right: 20px;
+      font-family: var(--font-display); font-size: 120px; font-weight: 900;
+      color: var(--orange-dim); line-height: 1; pointer-events: none;
+    }
+    .about-pull-quote p {
+      font-family: var(--font-display); font-style: italic; font-weight: 700;
+      font-size: 1.35rem; line-height: 1.35; color: var(--text-primary); position: relative; z-index: 1;
+    }
+    .cred-strip { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .cred-chip {
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
+      border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-mid);
+      font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-secondary);
+    }
+    .cred-chip .ci { color: var(--orange); }
 
-    /* ============================================================ STAT STRIP */
-    .stat-strip {
-      position: relative; z-index: 1;
+    /* ====================================================================
+       ⑥ SUPPORT — THE TWO POTS
+    ==================================================================== */
+    .support-section {
+      position: relative; z-index: 1; background: var(--bg-layer);
       border-top: 1px solid var(--border-dim); border-bottom: 1px solid var(--border-dim);
-      background: var(--bg-layer);
+      padding: 96px 0;
     }
-    .stat-strip-inner { display: grid; grid-template-columns: repeat(4, 1fr); }
-    .stat-block { padding: 28px 32px; border-right: 1px solid var(--border-dim); }
-    .stat-block:last-child { border-right: none; }
-    .stat-value {
-      font-family: var(--font-display); font-weight: 900;
-      font-size: clamp(2rem, 3.5vw, 3.2rem); line-height: 1;
-      letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 4px;
-    }
-    .stat-unit { font-size: 0.5em; font-weight: 600; color: var(--text-muted); vertical-align: baseline; }
-    .stat-label {
-      font-family: var(--font-display); font-size: 12px; font-weight: 600;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted);
-    }
-
-    /* ============================================================ MAP */
-    .map-container {
-      border-radius: var(--radius-lg); overflow: hidden;
-      border: 1px solid var(--border-mid); background: var(--bg-card);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
-    }
-    .map-topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 24px; background: var(--bg-surface);
-      border-bottom: 1px solid var(--border-dim); gap: 16px; flex-wrap: wrap;
-    }
-    .map-topbar-left { display: flex; align-items: center; gap: 12px; }
-    .map-topbar-title {
-      font-family: var(--font-display); font-weight: 700; font-size: 14px;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-primary);
-    }
-    .map-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 10px; border-radius: var(--radius-sm);
-      background: rgba(249,115,22,0.10); border: 1px solid rgba(249,115,22,0.18);
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange-light);
-    }
-    .map-iframe-wrap {
-      position: relative; width: 100%; padding-bottom: 52%;
-      background: var(--bg-card); min-height: 320px;
-    }
-    .map-iframe-wrap iframe {
-      position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block;
-    }
-    .map-placeholder {
-      position: absolute; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 16px; text-align: center; padding: 32px; background: var(--bg-card);
-    }
-    .map-placeholder-icon {
-      width: 64px; height: 64px; border-radius: 50%; background: var(--border-dim);
-      display: flex; align-items: center; justify-content: center; font-size: 28px;
-    }
-    .map-placeholder h3 {
-      font-family: var(--font-display); font-weight: 800; font-size: 1.4rem;
-      text-transform: uppercase; color: var(--text-secondary);
-    }
-    .map-placeholder p { font-size: 14px; color: var(--text-muted); max-width: 36ch; }
-    .map-placeholder code {
-      display: inline-block; padding: 4px 10px; border-radius: var(--radius-sm);
-      background: var(--bg-surface); border: 1px solid var(--border-mid);
-      font-family: monospace; font-size: 13px; color: var(--orange-light);
-    }
-    .map-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 24px; background: var(--bg-surface);
-      border-top: 1px solid var(--border-dim); gap: 16px; flex-wrap: wrap;
-    }
-    .map-coord { font-family: monospace; font-size: 13px; color: var(--text-muted); }
-
-    /* ============================================================ ROUTE PROGRESS */
-    .route-wrap {
-      background: var(--bg-card); border: 1px solid var(--border-mid);
-      border-radius: var(--radius-lg); padding: 40px 40px 36px;
-      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
-    }
-    .route-cities { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .route-city { display: flex; flex-direction: column; gap: 2px; }
-    .city-name {
-      font-family: var(--font-display); font-weight: 900; font-size: 1.6rem;
-      text-transform: uppercase; letter-spacing: 0.04em; line-height: 1; color: var(--text-primary);
-    }
-    .city-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
-    .route-city.end .city-name,
-    .route-city.end .city-label { text-align: right; }
-    .route-distance {
-      font-family: var(--font-display); font-weight: 800; font-size: 13px;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted);
-    }
-    .route-track {
-      position: relative; height: 28px; background: var(--bg-surface);
-      border-radius: 999px; overflow: visible; margin-bottom: 12px;
-      border: 1px solid var(--border-dim);
-    }
-    /* Route fill — width set dynamically by loadLiveStats() */
-    .route-fill {
-      position: absolute; top: 0; left: 0; height: 100%; width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--green) 0%, var(--green-light) 100%);
-      box-shadow: 0 0 20px var(--green-glow);
-      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .route-runner {
-      position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--green); border: 3px solid var(--bg-base);
-      box-shadow: 0 0 12px var(--green-glow);
-      display: flex; align-items: center; justify-content: center; font-size: 13px;
-    }
-    .route-milestones { display: flex; justify-content: space-between; margin-bottom: 28px; }
-    .milestone {
-      font-family: var(--font-display); font-size: 11px; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
-    }
-    .route-stats {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1px; background: var(--border-dim);
-      border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-dim);
-    }
-    .route-stat { padding: 20px 24px; background: var(--bg-surface); }
-    .rs-label {
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
-    }
-    .rs-value {
-      font-family: var(--font-display); font-weight: 900; font-size: 1.8rem;
-      line-height: 1; color: var(--text-primary); letter-spacing: -0.01em;
-    }
-    .rs-value.green  { color: var(--green-light); }
-    .rs-value.orange { color: var(--orange-light); }
-
-    /* Fundraising bar — width set dynamically */
-    .fund-wrap {
-      background: var(--bg-card); border: 1px solid var(--border-mid);
-      border-radius: var(--radius-lg); padding: 36px 40px; margin-top: 24px;
-    }
-    .fund-header {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
-    }
-    .fund-amount {
-      font-family: var(--font-display); font-weight: 900;
-      font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1;
-      letter-spacing: -0.02em; color: var(--text-primary);
-    }
-    .fund-track {
-      height: 16px; background: var(--bg-surface); border-radius: 999px;
-      overflow: hidden; border: 1px solid var(--border-dim); margin-bottom: 12px;
-    }
-    .fund-fill {
-      height: 100%; width: 0%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--orange) 0%, var(--orange-light) 100%);
-      box-shadow: 0 0 16px var(--orange-glow);
-      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .fund-footnote { font-size: 13px; color: var(--text-muted); }
-
-    /* ============================================================ DATA STATUS BADGE */
-    .data-status {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-muted); margin-top: 8px;
-    }
-    .data-status.ok   { color: var(--green-light); }
-    .data-status.err  { color: var(--orange-light); }
-    .data-status.load { color: var(--text-muted); }
-
-    /* ============================================================ RIG GRID */
-    .rig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .rig-card {
-      background: var(--bg-card); border: 1px solid var(--border-mid);
-      border-radius: var(--radius-lg); padding: 32px 28px;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    /* Pot A — Charity */
+    .charity-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; }
+    .charity-card {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      border: 1px solid rgba(34,197,94,0.22); padding: 40px;
       position: relative; overflow: hidden;
     }
-    .rig-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--orange), transparent);
-      opacity: 0; transition: opacity 0.3s;
+    .charity-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--green-light), var(--green));
     }
-    .rig-card:hover { border-color: var(--border-bright); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-    .rig-card:hover::before { opacity: 1; }
-    .rig-icon {
-      width: 52px; height: 52px; border-radius: var(--radius-md);
-      background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.18);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; margin-bottom: 20px;
+    .charity-badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
+      background: var(--green-dim); border: 1px solid rgba(34,197,94,0.25);
+      font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green-light); margin-bottom: 16px;
     }
-    .rig-number {
+    .charity-title { font-family: var(--font-display); font-weight: 900; font-size: 2.4rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--text-primary); line-height: 1; margin-bottom: 4px; }
+    .charity-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
+    .fund-amount { font-family: var(--font-display); font-weight: 900; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 14px; }
+    .fund-track { height: 16px; background: var(--bg-surface); border-radius: 999px; overflow: hidden; border: 1px solid var(--border-dim); margin-bottom: 8px; }
+    .fund-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--green), var(--green-light)); box-shadow: 0 0 16px var(--green-glow); transition: width 1.4s cubic-bezier(0.16,1,0.3,1); }
+    .fund-footnote { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+    .charity-about { background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid var(--border-dim); padding: 28px; }
+    .charity-about-title { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 10px; }
+    .charity-about p { font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 12px; }
+    .charity-about p:last-child { margin-bottom: 0; }
+
+    /* Pot separator */
+    .pot-separator { display: flex; align-items: center; gap: 16px; margin: 60px 0; }
+    .pot-separator hr { flex: 1; border: none; border-top: 1px solid var(--border-mid); }
+    .pot-separator span {
       font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px;
-    }
-    .rig-title {
-      font-family: var(--font-display); font-weight: 800; font-size: 1.6rem;
-      text-transform: uppercase; letter-spacing: 0.02em; color: var(--text-primary);
-      line-height: 1.1; margin-bottom: 6px;
-    }
-    .rig-subtitle {
-      font-size: 13px; font-weight: 600; color: var(--orange-light);
-      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;
-    }
-    .rig-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
-    .rig-specs { display: flex; flex-direction: column; gap: 8px; }
-    .rig-spec { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
-    .rig-spec::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
-
-    /* ============================================================ SOCIAL GRID */
-    .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .social-btn {
-      display: flex; flex-direction: column; align-items: center; gap: 12px;
-      padding: 32px 20px; border-radius: var(--radabel {
-      font-family: var(--font-display); font-size: 12px; font-weight: 600;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted);
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted);
+      white-space: nowrap; padding: 6px 16px; border-radius: 999px;
+      background: var(--bg-surface); border: 1px solid var(--border-dim);
     }
 
-    /* ============================================================ MAP */
-    .map-container {
-      border-radius: var(--radius-lg); overflow: hidden;
-      border: 1px solid var(--border-mid); background: var(--bg-card);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    /* Pot B — Buy Me a Coffee */
+    .bmac-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; }
+    .bmac-card {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      border: 1px solid rgba(249,115,22,0.20); padding: 40px;
+      text-align: center; position: relative; overflow: hidden;
     }
-    .map-topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 24px; background: var(--bg-surface);
-      border-bottom: 1px solid var(--border-dim); gap: 16px; flex-wrap: wrap;
+    .bmac-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--orange), #fbbf24, var(--orange));
     }
-    .map-topbar-left { display: flex; align-items: center; gap: 12px; }
-    .map-topbar-title {
-      font-family: var(--font-display); font-weight: 700; font-size: 14px;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-primary);
+    .bmac-coffee-icon { font-size: 52px; line-height: 1; margin-bottom: 14px; }
+    .bmac-badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
+      background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.22);
+      font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange-light); margin-bottom: 14px;
     }
-    .map-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 10px; border-radius: var(--radius-sm);
-      background: rgba(249,115,22,0.10); border: 1px solid rgba(249,115,22,0.18);
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange-light);
+    .bmac-title { font-family: var(--font-display); font-weight: 900; font-size: 2rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-primary); margin-bottom: 8px; }
+    .bmac-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 28px; line-height: 1.6; }
+    .bmac-btn {
+      display: inline-flex; align-items: center; gap: 10px; padding: 15px 32px; border-radius: var(--radius-md);
+      background: #FFDD00; color: #000; font-family: var(--font-display); font-weight: 800; font-size: 17px;
+      letter-spacing: 0.04em; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease; box-shadow: 0 4px 20px rgba(255,221,0,0.3);
     }
-    .map-iframe-wrap {
-      position: relative; width: 100%; padding-bottom: 52%;
-      background: var(--bg-card); min-height: 320px;
+    .bmac-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,221,0,0.45); color: #000; }
+    .bmac-disclaimer {
+      margin-top: 20px; padding: 14px 18px; border-radius: var(--radius-md);
+      background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.18);
+      font-size: 12px; color: var(--text-secondary); line-height: 1.6; text-align: left;
     }
-    .map-iframe-wrap iframe {
-      position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block;
+    .bmac-disclaimer strong { color: var(--orange-light); font-weight: 700; }
+    .bmac-list-title { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 16px; }
+    .bmac-list { display: flex; flex-direction: column; gap: 10px; list-style: none; }
+    .bmac-list li {
+      display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px;
+      background: var(--bg-card); border: 1px solid var(--border-mid); border-radius: var(--radius-md);
+      transition: border-color 0.2s, background 0.2s;
     }
-    .map-placeholder {
-      position: absolute; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 16px; text-align: center; padding: 32px; background: var(--bg-card);
-    }
-    .map-placeholder-icon {
-      width: 64px; height: 64px; border-radius: 50%; background: var(--border-dim);
-      display: flex; align-items: center; justify-content: center; font-size: 28px;
-    }
-    .map-placeholder h3 {
-      font-family: var(--font-display); font-weight: 800; font-size: 1.4rem;
-      text-transform: uppercase; color: var(--text-secondary);
-    }
-    .map-placeholder p { font-size: 14px; color: var(--text-muted); max-width: 36ch; }
-    .map-placeholder code {
-      display: inline-block; padding: 4px 10px; border-radius: var(--radius-sm);
-      background: var(--bg-surface); border: 1px solid var(--border-mid);
-      font-family: monospace; font-size: 13px; color: var(--orange-light);
-    }
-    .map-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 24px; background: var(--bg-surface);
-      border-top: 1px solid var(--border-dim); gap: 16px; flex-wrap: wrap;
-    }
-    .map-coord { font-family: monospace; font-size: 13px; color: var(--text-muted); }
+    .bmac-list li:hover { border-color: var(--border-bright); background: var(--bg-card-hover); }
+    .bi-icon { font-size: 20px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+    .bi-title { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 2px; }
+    .bi-desc  { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
-    /* ============================================================ ROUTE PROGRESS */
-    .route-wrap {
-      background: var(--bg-card); border: 1px solid var(--border-mid);
-      border-radius: var(--radius-lg); padding: 40px 40px 36px;
-      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
-    }
-    .route-cities { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .route-city { display: flex; flex-direction: column; gap: 2px; }
-    .city-name {
-      font-family: var(--font-display); font-weight: 900; font-size: 1.6rem;
-      text-transform: uppercase; letter-spacing: 0.04em; line-height: 1; color: var(--text-primary);
-    }
-    .city-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
-    .route-city.end .city-name,
-    .route-city.end .city-label { text-align: right; }
-    .route-distance {
-      font-family: var(--font-display); font-weight: 800; font-size: 13px;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted);
-    }
-    .route-track {
-      position: relative; height: 28px; background: var(--bg-surface);
-      border-radius: 999px; overflow: visible; margin-bottom: 12px;
-      border: 1px solid var(--border-dim);
-    }
-    /* Route fill — width set dynamically by loadLiveStats() */
-    .route-fill {
-      position: absolute; top: 0; left: 0; height: 100%; width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--green) 0%, var(--green-light) 100%);
-      box-shadow: 0 0 20px var(--green-glow);
-      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .route-runner {
-      position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--green); border: 3px solid var(--bg-base);
-      box-shadow: 0 0 12px var(--green-glow);
-      display: flex; align-items: center; justify-content: center; font-size: 13px;
-    }
-    .route-milestones { display: flex; justify-content: space-between; margin-bottom: 28px; }
-    .milestone {
-      font-family: var(--font-display); font-size: 11px; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
-    }
-    .route-stats {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1px; background: var(--border-dim);
-      border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-dim);
-    }
-    .route-stat { padding: 20px 24px; background: var(--bg-surface); }
-    .rs-label {
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
-    }
-    .rs-value {
-      font-family: var(--font-display); font-weight: 900; font-size: 1.8rem;
-      line-height: 1; color: var(--text-primary); letter-spacing: -0.01em;
-    }
-    .rs-value.green  { color: var(--green-light); }
-    .rs-value.orange { color: var(--orange-light); }
-
-    /* Fundraising bar — width set dynamically */
-    .fund-wrap {
-      background: var(--bg-card); border: 1px solid var(--border-mid);
-      border-radius: var(--radius-lg); padding: 36px 40px; margin-top: 24px;
-    }
-    .fund-header {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
-    }
-    .fund-amount {
-      font-family: var(--font-display); font-weight: 900;
-      font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1;
-      letter-spacing: -0.02em; color: var(--text-primary);
-    }
-    .fund-track {
-      height: 16px; background: var(--bg-surface); border-radius: 999px;
-      overflow: hidden; border: 1px solid var(--border-dim); margin-bottom: 12px;
-    }
-    .fund-fill {
-      height: 100%; width: 0%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--orange) 0%, var(--orange-light) 100%);
-      box-shadow: 0 0 16px var(--orange-glow);
-      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .fund-footnote { font-size: 13px; color: var(--text-muted); }
-
-    /* ============================================================ DATA STATUS BADGE */
-    .data-status {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-muted); margin-top: 8px;
-    }
-    .data-status.ok   { color: var(--green-light); }
-    .data-status.err  { color: var(--orange-light); }
-    .data-status.load { color: var(--text-muted); }
-
-    /* ============================================================ RIG GRID */
-    .rig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .rig-card {
-      background: var(--bg-card); border: 1px solid var(--border-mid);
-      border-radius: var(--radius-lg); padding: 32px 28px;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-      position: relative; overflow: hidden;
-    }
-    .rig-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--orange), transparent);
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .rig-card:hover { border-color: var(--border-bright); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-    .rig-card:hover::before { opacity: 1; }
-    .rig-icon {
-      width: 52px; height: 52px; border-radius: var(--radius-md);
-      background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.18);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; margin-bottom: 20px;
-    }
-    .rig-number {
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px;
-    }
-    .rig-title {
-      font-family: var(--font-display); font-weight: 800; font-size: 1.6rem;
-      text-transform: uppercase; letter-spacing: 0.02em; color: var(--text-primary);
-      line-height: 1.1; margin-bottom: 6px;
-    }
-    .rig-subtitle {
-      font-size: 13px; font-weight: 600; color: var(--orange-light);
-      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;
-    }
-    .rig-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
-    .rig-specs { display: flex; flex-direction: column; gap: 8px; }
-    .rig-spec { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
-    .rig-spec::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
-
-    /* ============================================================ SOCIAL GRID */
-    .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    /* ====================================================================
+       SOCIAL
+    ==================================================================== */
+    .social-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
     .social-btn {
       display: flex; flex-direction: column; align-items: center; gap: 12px;
       padding: 32px 20px; border-radius: var(--radius-lg);
@@ -965,51 +562,17 @@
       transition: border-color 0.2s, transform 0.2s, background 0.2s; text-align: center;
     }
     .social-btn:hover { border-color: var(--border-bright); background: var(--bg-card-hover); transform: translateY(-3px); }
-    .social-icon-wrap {
-      width: 52px; height: 52px; border-radius: var(--radius-md);
-      display: flex; align-items: center; justify-content: center;
-    }
+    .social-icon-wrap { width: 52px; height: 52px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
     .social-icon-wrap svg { width: 28px; height: 28px; fill: currentColor; }
     .social-icon-wrap.yt { background: rgba(255,0,0,0.12); color: #ff4444; }
     .social-icon-wrap.tt { background: rgba(255,255,255,0.06); color: var(--text-primary); }
     .social-icon-wrap.ig { background: rgba(225,48,108,0.12); color: #e1306c; }
-    .social-name {
-      font-family: var(--font-display); font-weight: 800; font-size: 1.1rem;
-      text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary);
-    }
+    .social-name { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); }
     .social-handle { font-size: 13px; color: var(--text-muted); }
 
-    /* ============================================================ MANIFESTO */
-    .manifesto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
-    .manifesto-body { font-size: 17px; color: var(--text-secondary); line-height: 1.75; }
-    .manifesto-body p + p { margin-top: 18px; }
-    .manifesto-body strong { color: var(--text-primary); font-weight: 600; }
-    .manifesto-quote {
-      margin: 32px 0; padding: 24px 28px; border-left: 3px solid var(--orange);
-      background: var(--bg-card); border-radius: 0 var(--radius-md) var(--radius-md) 0;
-    }
-    .manifesto-quote p {
-      font-family: var(--font-display); font-style: italic; font-weight: 700;
-      font-size: 1.3rem; line-height: 1.3; color: var(--text-primary);
-    }
-    .manifesto-right { display: flex; flex-direction: column; gap: 16px; }
-    .fact-card {
-      background: var(--bg-card); border: 1px solid var(--border-mid);
-      border-radius: var(--radius-md); padding: 24px;
-      display: flex; gap: 16px; align-items: flex-start;
-    }
-    .fact-icon {
-      width: 44px; height: 44px; border-radius: var(--radius-sm);
-      background: var(--orange-dim); display: flex; align-items: center;
-      justify-content: center; font-size: 20px; flex-shrink: 0;
-    }
-    .fact-title {
-      font-family: var(--font-display); font-weight: 800; font-size: 1.05rem;
-      text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-primary); margin-bottom: 4px;
-    }
-    .fact-body { font-size: 14px; color: var(--text-secondary); line-height: 1.55; }
-
-    /* ============================================================ FOOTER */
+    /* ====================================================================
+       FOOTER
+    ==================================================================== */
     footer {
       position: relative; z-index: 1;
       border-top: 1px solid var(--border-dim); padding: 40px 24px; background: var(--bg-layer);
@@ -1022,76 +585,75 @@
     .footer-brand span { color: var(--orange); }
     .footer-cause { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
     .footer-cause a { color: var(--green-light); font-weight: 600; }
-    .divider { border: none; border-top: 1px solid var(--border-dim); margin: 0; }
 
-    /* ============================================================ RESPONSIVE */
-    @media (max-width: 900px) {
-      .stat-strip-inner { grid-template-columns: repeat(2, 1fr); }
+    /* ====================================================================
+       RESPONSIVE
+    ==================================================================== */
+    @media (max-width: 960px) {
+      .about-grid    { grid-template-columns: 1fr; gap: 40px; }
+      .about-portrait { max-width: 480px; margin: 0 auto; width: 100%; aspect-ratio: 16/9; }
+      .charity-grid  { grid-template-columns: 1fr; }
+      .bmac-grid     { grid-template-columns: 1fr; }
+      .stat-strip-inner { grid-template-columns: repeat(2,1fr); }
       .stat-block:nth-child(2) { border-right: none; }
-      .stat-block:nth-child(3) { border-right: 1px solid var(--border-dim); border-top: 1px solid var(--border-dim); }
+      .stat-block:nth-child(3) { border-top: 1px solid var(--border-dim); border-right: 1px solid var(--border-dim); }
       .stat-block:nth-child(4) { border-top: 1px solid var(--border-dim); }
-      .rig-grid { grid-template-columns: 1fr 1fr; }
-      .rig-grid .rig-card:last-child { grid-column: 1 / -1; }
-      .manifesto-grid { grid-template-columns: 1fr; gap: 40px; }
-      .route-wrap { padding: 28px 24px; }
-      .fund-wrap  { padding: 28px 24px; }
     }
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       .wrap { padding: 0 16px; }
       .section { padding: 64px 0; }
+      .section-sm { padding: 48px 0; }
       .nav-links { display: none; }
-      .hero { padding: 48px 0 56px; }
-      .stat-strip-inner { grid-template-columns: repeat(2, 1fr); }
-      .stat-block { padding: 20px; }
-      .rig-grid { grid-template-columns: 1fr; }
-      .rig-grid .rig-card:last-child { grid-column: auto; }
+      .hero { padding: 48px 0 52px; }
+      .countdown-wrap { padding: 40px 20px; }
+      .countdown-digits { gap: 6px; }
+      .cd-num { font-size: clamp(3rem, 18vw, 5rem); }
+      .cd-sep { font-size: clamp(2rem, 12vw, 3.5rem); }
+      .route-stats { grid-template-columns: 1fr; }
+      .route-stat { padding: 14px 16px; }
+      .route-wrap { padding: 24px 18px; }
       .social-grid { grid-template-columns: 1fr; }
       .social-btn { flex-direction: row; text-align: left; padding: 18px 20px; gap: 16px; }
-      .route-stats { grid-template-columns: 1fr; }
-      .route-stat { padding: 16px 18px; }
-      .route-wrap { padding: 24px 18px; }
-      .fund-wrap  { padding: 24px 18px; }
-      .city-name  { font-size: 1.2rem; }
-      .map-iframe-wrap { padding-bottom: 75%; }
-      .manifesto-grid { gap: 32px; }
+      .charity-card, .bmac-card { padding: 28px 20px; }
+      .stat-block { padding: 18px 16px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ============================================================ NAV -->
+  <!-- ================================================================ NAV -->
   <nav>
     <div class="nav-inner">
       <div class="nav-brand">Brindle <span>Does Things</span></div>
       <div class="nav-links">
-        <a href="#map">Live Map</a>
-        <a href="#rig">The Rig</a>
-        <a href="#progress">Progress</a>
+        <a href="#video">The Hook</a>
+        <a href="#tracker">Tracker</a>
+        <a href="#map">Map</a>
+        <a href="#story">The Story</a>
+        <a href="#support">Support</a>
         <a href="#social">Follow</a>
-        <a href="#manifesto">Mission</a>
       </div>
       <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-      <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer" style="padding: 10px 20px; font-size: 14px;">
-        Donate Now
-      </a>
+      <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer" style="padding: 10px 18px; font-size: 13px; flex-shrink: 0;">💚 Donate</a>
     </div>
   </nav>
 
 
-  <!-- ============================================================ HERO -->
-  <section class="hero">
+  <!-- ================================================================
+       ① HERO
+  ================================================================ -->
+  <section class="hero" id="hero">
     <div class="wrap">
 
       <div class="hero-eyebrow">
-        <div class="tag-pill">⚡ World Endurance Run</div>
+        <div class="tag-pill">⚡ World Endurance Run · Aug 15, 2026</div>
         <!--
-          LIVE LOCATION PILL
-          This text is updated automatically from data.json via loadLiveStats().
-          Fallback text shown while loading or if fetch fails.
+          Live location pill — pre-launch shows the launch date text.
+          Post-launch, loadLiveStats() updates this via data.json.
         -->
         <div class="live-pill">
           <span class="live-dot"></span>
-          <span id="live-location">Current Location: Loading&hellip;</span>
+          <span id="live-location">Mission Launches: 15 August 2026</span>
         </div>
       </div>
 
@@ -1105,267 +667,488 @@
         <div class="meta-chip">🏃 ~57km per day</div>
         <div class="meta-chip">🪖 45kg custom buggy</div>
         <div class="meta-chip">☀️ 200W solar-powered</div>
-        <div class="meta-chip">💚 Raising $100,000 for Men's Talk</div>
+        <div class="meta-chip">💚 $10,000 for Men's Talk</div>
       </div>
 
       <div class="hero-cta-row">
         <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
         <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer">💚 Donate to Men's Talk</a>
-        <a class="btn btn-ghost" href="#map">📍 Track Live</a>
-        <a class="btn btn-ghost" href="#manifesto">Read the Mission</a>
+        <!-- Smooth-scrolls to the story section -->
+        <a class="btn btn-ghost" href="#story">Learn More ↓</a>
+        <a class="btn btn-ghost" href="#tracker">📍 Track Live</a>
       </div>
 
     </div>
   </section>
 
-
-  <!-- ============================================================ STAT STRIP -->
+  <!-- Stat strip -->
   <div class="stat-strip">
     <div class="wrap">
       <div class="stat-strip-inner">
         <div class="stat-block">
           <div class="stat-value">4,000<span class="stat-unit">km</span></div>
-          <div class="stat-label">Total Route Distance</div>
+          <div class="stat-label">Total Route</div>
         </div>
         <div class="stat-block">
           <div class="stat-value">70<span class="stat-unit">days</span></div>
           <div class="stat-label">Mission Duration</div>
         </div>
         <div class="stat-block">
-          <div class="stat-value">$100k<span class="stat-unit">aud</span></div>
-          <div class="stat-label">Fundraising Target</div>
+          <div class="stat-value">$10k<span class="stat-unit">aud</span></div>
+          <div class="stat-label">Charity Goal</div>
         </div>
         <div class="stat-block">
           <div class="stat-value">45<span class="stat-unit">kg</span></div>
-          <div class="stat-label">Buggy Loaded Weight</div>
+          <div class="stat-label">Buggy Weight</div>
         </div>
       </div>
     </div>
   </div>
 
+  <hr class="divider" />
 
-  <!-- ============================================================ MAP -->
-  <section class="section" id="map">
+
+  <!-- ================================================================
+       ② FEATURED VIDEO — The Hook
+
+       HOW TO ACTIVATE:
+       1. Get your YouTube video ID from the URL after ?v=
+          e.g. https://youtu.be/dQw4w9WgXcQ → ID is dQw4w9WgXcQ
+       2. Replace YOUR_VIDEO_ID in the iframe src below.
+       3. The placeholder card disappears automatically.
+       ?autoplay=1&mute=1 makes it play silently on page load.
+  ================================================================ -->
+  <section class="video-section" id="video">
     <div class="wrap">
-      <div class="section-header">
-        <div class="section-kicker">Live Tracking</div>
-        <h2 class="section-title">Mission Map</h2>
-        <p class="section-desc">Real-time position via Garmin inReach satellite tracker. Updated automatically while on route.</p>
+
+      <div class="section-header" style="text-align:center; max-width:700px; margin:0 auto 40px;">
+        <div class="section-kicker">The Mission</div>
+        <h2 class="section-title">Watch the Announcement</h2>
+        <p class="section-desc" style="margin:0 auto;">4,000km. 70 days. One man, one buggy, zero support crew. Here's why.</p>
       </div>
 
-      <div class="map-container">
-        <div class="map-topbar">
-          <div class="map-topbar-left">
+      <div class="video-wrap">
+        <div class="video-ratio">
+          <iframe
+            id="yt-embed"
+            src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&mute=1&rel=0&modestbranding=1"
+            title="Brindle Does Things — Mission Announcement"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+          <!-- Hidden automatically once YOUR_VIDEO_ID is replaced -->
+          <div class="video-placeholder" id="video-ph">
+            <div class="video-play-icon">▶</div>
+            <h3>Announcement Video Coming Soon</h3>
+            <p>Replace <code>YOUR_VIDEO_ID</code> in the iframe src with your YouTube video ID to activate this player with autoplay.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+
+  <!-- ================================================================
+       ③ COUNTDOWN / LIVE TRACKER
+       JavaScript checks today's date against August 15 2026 (AWST).
+       Pre-launch  → countdown timer (ticks every second).
+       Post-launch → live route progress bar (reads data.json).
+  ================================================================ -->
+  <section class="section-sm" id="tracker">
+    <div class="wrap">
+
+      <div class="section-header">
+        <div class="section-kicker" id="tracker-kicker">Mission Countdown</div>
+        <h2 class="section-title" id="tracker-title">The Clock<br />is Running</h2>
+        <p class="section-desc" id="tracker-desc">Mission launches Scarborough Beach, Perth on August 15, 2026. Follow every kilometre in real time.</p>
+      </div>
+
+      <!-- State A: Countdown — shown pre-launch by JS -->
+      <div id="state-countdown">
+        <div class="countdown-wrap">
+          <div class="countdown-label">⚡ Mission Launches In</div>
+          <div class="countdown-date">
+            <strong>15 August 2026</strong> &nbsp;&middot;&nbsp; Scarborough Beach, Perth WA
+          </div>
+          <div class="countdown-digits">
+            <div class="cd-unit">
+              <div class="cd-num orange" id="cd-days">--</div>
+              <div class="cd-label">Days</div>
+            </div>
+            <div class="cd-sep">:</div>
+            <div class="cd-unit">
+              <div class="cd-num" id="cd-hours">--</div>
+              <div class="cd-label">Hours</div>
+            </div>
+            <div class="cd-sep">:</div>
+            <div class="cd-unit">
+              <div class="cd-num" id="cd-mins">--</div>
+              <div class="cd-label">Mins</div>
+            </div>
+          </div>
+          <div class="countdown-cta">
+            <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
+            <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer">💚 Donate Before Launch</a>
+            <a class="btn btn-ghost" href="#video">Watch the Announcement</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- State B: Live stats — shown post-launch by JS -->
+      <div id="state-live">
+        <p class="section-desc" style="margin-bottom: 8px;">
+          Stats update automatically every hour via Garmin satellite.
+          <br><span class="data-status load" id="data-status">⏳ Loading live data&hellip;</span>
+        </p>
+        <div class="route-wrap" style="margin-top: 32px;">
+          <div class="route-cities">
+            <div class="route-city">
+              <div class="city-label">Start &middot; Day 1 &middot; Scarborough Beach</div>
+              <div class="city-name">Perth</div>
+            </div>
+            <div class="route-distance">&#8212;&#8212; 4,000km &#8212;&#8212;</div>
+            <div class="route-city end">
+              <div class="city-label">Finish &middot; Day 70 &middot; Bondi Beach</div>
+              <div class="city-name">Sydney</div>
+            </div>
+          </div>
+          <div class="route-track">
+            <div class="route-fill" id="route-fill">
+              <div class="route-runner">🏃</div>
+            </div>
+          </div>
+          <div class="route-milestones">
+            <span class="milestone">Perth</span>
+            <span class="milestone">Kalgoorlie</span>
+            <span class="milestone">Nullarbor</span>
+            <span class="milestone">Adelaide</span>
+            <span class="milestone">Sydney</span>
+          </div>
+          <div class="route-stats">
+            <div class="route-stat">
+              <div class="rs-label">Distance Covered</div>
+              <div class="rs-value green" id="stat-km">— <span style="font-size:1rem;">km</span></div>
+            </div>
+            <div class="route-stat">
+              <div class="rs-label">Days on Road</div>
+              <div class="rs-value orange" id="stat-day">Day —</div>
+            </div>
+            <div class="route-stat">
+              <div class="rs-label">Remaining</div>
+              <div class="rs-value" id="stat-remaining">— <span style="font-size:1rem;">km</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+
+  <!-- ================================================================
+       ④ SATELLITE TRACKER PLACEHOLDER
+
+       The Garmin iframe is commented out below.
+       On launch day:
+         1. Uncomment the iframe block.
+         2. Replace YOUR_MAPSHARE_ID with your real Garmin ID.
+         3. Delete the sat-body placeholder div.
+  ================================================================ -->
+  <section class="section-sm" id="map">
+    <div class="wrap">
+
+      <div class="section-header">
+        <div class="section-kicker">Live Tracking</div>
+        <h2 class="section-title">Satellite Map</h2>
+        <p class="section-desc">Garmin inReach live tracking activates at 6am August 15, 2026. Every step trackable in real time.</p>
+      </div>
+
+      <div class="sat-wrap">
+        <div class="sat-topbar">
+          <div class="sat-topbar-left">
             <div class="live-pill" style="font-size: 12px; padding: 4px 10px 4px 8px;">
               <span class="live-dot"></span>
               Garmin inReach MapShare
             </div>
-            <div class="map-topbar-title">Live Position Feed</div>
+            <div class="sat-topbar-title">Live Position Feed</div>
           </div>
-          <div style="display:flex; gap: 8px; flex-wrap: wrap;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <div class="map-badge">📡 Satellite Comms</div>
-            <div class="map-badge">🔄 Auto-Refresh</div>
+            <div class="map-badge">🔄 10-min Refresh</div>
           </div>
         </div>
 
-        <div class="map-iframe-wrap">
+        <!--
+          ═══════════════════════════════════════════════════════
+          GARMIN IFRAME — ACTIVATE ON LAUNCH DAY
+          ═══════════════════════════════════════════════════════
+          1. Log in to Garmin Explore → MapShare settings
+          2. Enable MapShare → copy your share URL/ID
+          3. Uncomment the block below and replace YOUR_MAPSHARE_ID
+          4. Delete the sat-body div below this comment block
+
+          <div style="position:relative;width:100%;padding-bottom:52%;min-height:320px;">
+            <iframe
+              src="https://share.garmin.com/YOUR_MAPSHARE_ID"
+              title="Garmin inReach Live Position — Brindle Does Things"
+              allowfullscreen loading="lazy"
+              style="position:absolute;inset:0;width:100%;height:100%;border:none;">
+            </iframe>
+          </div>
+          ═══════════════════════════════════════════════════════
+        -->
+
+        <!-- PLACEHOLDER — delete this block when activating the iframe -->
+        <div class="sat-body">
+          <div class="sat-icon">📍</div>
+          <div class="sat-headline">
+            Satellite Tracking Live
+            <span class="sat-date">15 August 2026</span>
+          </div>
+          <p class="sat-sub">The Garmin inReach MapShare feed activates the moment the run begins at Scarborough Beach. Check back on launch day to track every step in real time.</p>
+          <a class="btn btn-ghost" href="#tracker">⏱ See the Countdown</a>
+        </div>
+
+        <div class="sat-footer">
+          <div class="sat-coord">📍 Garmin inReach · Satellite Comms · Activates 15 Aug 2026</div>
           <!--
-            GARMIN INREACH EMBED
-            1. Log into Garmin Explore → MapShare settings
-            2. Enable MapShare and copy your share URL
-            3. Replace the src="#" below with your MapShare URL
-               Format: https://share.garmin.com/YOUR_MAPSHARE_ID
+            ↓ REPLACE href="#" WITH YOUR GARMIN MAPSHARE URL ON LAUNCH DAY
+            Format: https://share.garmin.com/YOUR_MAPSHARE_ID
           -->
-          <iframe
-            src="#"
-            title="Garmin inReach Live Position — Brindle Does Things"
-            allowfullscreen
-            loading="lazy">
-          </iframe>
-          <!-- This placeholder disappears automatically once src is set -->
-          <div class="map-placeholder" id="map-ph">
-            <div class="map-placeholder-icon">🗺️</div>
-            <h3>Garmin MapShare Embed</h3>
-            <p>Paste your Garmin inReach MapShare URL into the <code>src</code> of the iframe above to show the live map.</p>
-            <p style="color: var(--orange-light); font-size: 13px; font-weight: 600; margin-top: 4px;">
-              Format: https://share.garmin.com/YOUR_ID
+          <a class="btn btn-ghost" href="#" style="padding:8px 16px;font-size:13px;">Open Full Map ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+
+  <!-- ================================================================
+       ⑤ THE STORY — About the Runner
+  ================================================================ -->
+  <section class="section" id="story">
+    <div class="wrap">
+
+      <div class="about-grid">
+
+        <!-- Left: portrait -->
+        <div>
+          <div class="about-portrait">
+            <!--
+              PHOTO: Replace the placeholder div below with:
+              <img src="matthew.jpg" alt="Matthew Brindle"
+                   style="width:100%;height:100%;object-fit:cover;" />
+            -->
+            <div class="portrait-placeholder">
+              <div class="portrait-icon">🏃</div>
+              <p>Add your photo here<br />(replace with &lt;img&gt;)</p>
+            </div>
+            <div class="about-origin-tag">🇬🇧 England &rarr; 🇦🇺 Australia</div>
+          </div>
+        </div>
+
+        <!-- Right: story -->
+        <div>
+          <div class="section-header" style="margin-bottom: 32px;">
+            <div class="section-kicker">The Man Behind the Mission</div>
+            <h2 class="section-title">From England<br />to the Outback:<br />Why I'm Running.</h2>
+          </div>
+
+          <div class="about-story">
+            <p>
+              <strong>I am a UK-trained and qualified Electrical &amp; Electronic Engineer</strong> who moved to Australia to escape a cycle of addiction that nearly cost me my life.
+            </p>
+            <p>
+              After arriving, I faced immediate hardship — living in my car for three months while working Uber Eats just to survive. No safety net. No support crew. Sound familiar?
+            </p>
+            <div class="about-pull-quote">
+              <p>"Having lost close friends and family to addiction and suicide, I realised I wanted to use my struggle to show other men that you can always keep pushing forward — no matter how dark it gets."</p>
+            </div>
+            <p>
+              This run isn't about endurance records. It's about proof. <strong>Proof that the darkest chapter of your life doesn't have to be the last one.</strong> Every kilometre I push that buggy across the outback is a kilometre I didn't give up.
+            </p>
+            <p>
+              Men's Talk exists to create the rooms where those conversations happen safely. Follow along. Tell someone. And if you can, donate.
             </p>
           </div>
+
+          <div class="cred-strip">
+            <div class="cred-chip"><span class="ci">⚡</span> Electrical &amp; Electronic Engineer</div>
+            <div class="cred-chip"><span class="ci">🇬🇧</span> UK Qualified</div>
+            <div class="cred-chip"><span class="ci">🇦🇺</span> Based in Australia</div>
+            <div class="cred-chip"><span class="ci">💚</span> Recovery Advocate</div>
+          </div>
+
+          <div style="margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;">
+            <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
+            <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer">💚 Back the Mission</a>
+            <a class="btn btn-ghost" href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer">Men's Talk ↗</a>
+          </div>
         </div>
 
-        <div class="map-footer">
-          <div class="map-coord" id="map-coords">📍 Awaiting GPS data&hellip;</div>
-          <!-- ↓ REPLACE href="#" WITH YOUR FULL GARMIN MAPSHARE URL -->
-          <a class="btn btn-ghost" href="#" target="_blank" rel="noopener noreferrer" style="padding: 8px 16px; font-size: 13px;">
-            Open Full Map ↗
-          </a>
-        </div>
       </div>
     </div>
   </section>
 
+  <hr class="divider" />
 
-  <!-- ============================================================ ROUTE PROGRESS + FUNDRAISING -->
-  <section class="section-sm" id="progress" style="padding-bottom: 96px;">
+
+  <!-- ================================================================
+       ⑥ SUPPORT — TWO POTS
+       Clearly separated: charity vs personal mission fund.
+  ================================================================ -->
+  <div class="support-section" id="support">
     <div class="wrap">
 
-      <div class="section-header">
-        <div class="section-kicker">Route Progress</div>
-        <h2 class="section-title">Perth &rarr; Sydney</h2>
-        <p class="section-desc">
-          Tracking every km across the continent. Stats update automatically every hour via satellite data.
-          <br><span class="data-status load" id="data-status">⏳ Loading live data&hellip;</span>
-        </p>
+      <div class="section-header" style="text-align:center; max-width:680px; margin:0 auto 56px;">
+        <div class="section-kicker">Support the Mission</div>
+        <h2 class="section-title">Two Ways<br />to Help</h2>
+        <p class="section-desc" style="margin:0 auto;">There are two completely separate funds. Please read both so you know exactly where your support goes.</p>
       </div>
 
-      <!-- Route bar -->
-      <div class="route-wrap">
-        <div class="route-cities">
-          <div class="route-city">
-            <div class="city-label">Start &middot; Day 1 &middot; Scarborough Beach</div>
-            <div class="city-name">Perth</div>
-          </div>
-          <div class="route-distance">&#8212;&#8212; 4,000km &#8212;&#8212;</div>
-          <div class="route-city end">
-            <div class="city-label">Finish &middot; Day 70 &middot; Bondi Beach</div>
-            <div class="city-name">Sydney</div>
-          </div>
-        </div>
+      <!-- ═════ POT A: CHARITY ═════ -->
+      <div class="charity-grid">
 
-        <div class="route-track">
-          <!-- Width is set dynamically: (current_km / 4000) * 100 -->
-          <div class="route-fill" id="route-fill">
-            <div class="route-runner">🏃</div>
-          </div>
-        </div>
+        <div>
+          <div class="charity-card">
+            <div class="charity-badge">💚 Official Charity Fundraiser</div>
+            <div class="charity-title">Men's Talk</div>
+            <div class="charity-subtitle">100% of donations go directly to the charity. Not to Matthew.</div>
 
-        <div class="route-milestones">
-          <span class="milestone">Perth</span>
-          <span class="milestone">Kalgoorlie</span>
-          <span class="milestone">Nullarbor</span>
-          <span class="milestone">Adelaide</span>
-          <span class="milestone">Sydney</span>
-        </div>
-
-        <div class="route-stats">
-          <div class="route-stat">
-            <div class="rs-label">Distance Covered</div>
-            <!-- Updated by loadLiveStats() -->
-            <div class="rs-value green" id="stat-km">— <span style="font-size: 1rem;">km</span></div>
-          </div>
-          <div class="route-stat">
-            <div class="rs-label">Days on Road</div>
-            <div class="rs-value orange" id="stat-day">Day —</div>
-          </div>
-          <div class="route-stat">
-            <div class="rs-label">Remaining</div>
-            <div class="rs-value" id="stat-remaining">— <span style="font-size: 1rem;">km</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Fundraising bar -->
-      <div class="fund-wrap">
-        <div class="fund-header">
-          <div>
-            <div class="section-kicker" style="margin-bottom: 6px;">Men's Talk Fundraiser</div>
-            <!-- Updated by loadLiveStats() -->
+            <!-- Updated post-launch by loadLiveStats() via data.json -->
             <div class="fund-amount" id="stat-raised">
-              $— <span style="font-size: 1.2rem; color: var(--text-muted); font-weight: 600;">/ $100,000 AUD</span>
+              $0 <span style="font-size:1rem;color:var(--text-muted);font-weight:600;">/ $10,000 AUD</span>
+            </div>
+            <div class="fund-track">
+              <div class="fund-fill" id="fund-fill"></div>
+            </div>
+            <div class="fund-footnote">Progress updates live once the mission launches on August 15, 2026.</div>
+
+            <!-- ↓ REPLACE href="#" WITH YOUR MEN'S TALK DONATION URL -->
+            <a class="btn btn-green" href="#" target="_blank" rel="noopener noreferrer" style="width:100%;justify-content:center;">
+              💚 Donate to Men's Talk
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-header" style="margin-bottom: 24px;">
+            <div class="section-kicker">Pot A — The Charity</div>
+            <h3 class="section-title" style="font-size: clamp(2rem,4vw,3rem);">Who Gets<br />This Money?</h3>
+          </div>
+          <div class="charity-about">
+            <div class="charity-about-title">Men's Talk — Men's Mental Health Australia</div>
+            <p>Men's Talk provides real, accessible mental health support for men across Australia — counselling, peer programs, and conversations that save lives.</p>
+            <p>75% of suicides in Australia are men. Men are far less likely to seek help. This fundraiser turns Matthew's lived experience into direct action.</p>
+            <p><strong style="color:var(--text-primary);">Your donation goes 100% to the charity.</strong> Not one cent of this fund covers the buggy, shoes, or food.</p>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+            <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
+            <a class="btn btn-green" href="#" target="_blank" rel="noopener noreferrer">💚 Donate Now</a>
+            <a class="btn btn-ghost" href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer">Visit Men's Talk ↗</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Visual separator with clear label ── -->
+      <div class="pot-separator">
+        <hr />
+        <span>⚠️ Separate Fund Below — Personal Mission Support</span>
+        <hr />
+      </div>
+
+      <!-- ═════ POT B: BUY ME A COFFEE ═════ -->
+      <div class="bmac-grid">
+
+        <div>
+          <div class="bmac-card">
+            <div class="bmac-coffee-icon">☕</div>
+            <div class="bmac-badge">⚙️ Personal Mission Fund</div>
+            <div class="bmac-title">Buy Matthew a Coffee</div>
+            <div class="bmac-sub">Direct fuel for the runner — the gear and logistics that make 4,000km physically possible.</div>
+
+            <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer">
+              ☕ Buy Me a Coffee
+            </a>
+
+            <div class="bmac-disclaimer">
+              <strong>⚠️ Please Note:</strong> Contributions via "Buy Me a Coffee" go directly to Matthew to fund the physical requirements of this unsupported mission. These funds are <strong>entirely separate</strong> from the $10,000 Men's Talk charity goal — every cent of which goes to the charity.
             </div>
           </div>
-          <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-          <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer">💚 Donate Now</a>
         </div>
 
-        <div class="fund-track">
-          <!-- Width is set dynamically: (total_raised / 100000) * 100 -->
-          <div class="fund-fill" id="fund-fill"></div>
+        <div>
+          <div class="section-header" style="margin-bottom: 24px;">
+            <div class="section-kicker">Pot B — The Mission Fund</div>
+            <h3 class="section-title" style="font-size: clamp(2rem,4vw,3rem);">What Does<br />This Cover?</h3>
+          </div>
+          <div class="bmac-list-title">Every dollar here funds the mission itself</div>
+          <ul class="bmac-list">
+            <li>
+              <span class="bi-icon">🦯</span>
+              <div>
+                <div class="bi-title">Custom Endurance Buggy &amp; DIY Modifications</div>
+                <div class="bi-desc">Hand-built to carry 45kg across every road surface between Perth and Sydney.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">📡</span>
+              <div>
+                <div class="bi-title">Garmin inReach Satellite Subscription</div>
+                <div class="bi-desc">Monthly satellite comms — live tracking and emergency SOS, always on.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">🍫</span>
+              <div>
+                <div class="bi-title">High-Calorie Expedition Food, Water &amp; Gels</div>
+                <div class="bi-desc">Burning thousands of calories unsupported — the food bill is real and relentless.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">👟</span>
+              <div>
+                <div class="bi-title">Specialised Running Shoes (Multiple Pairs)</div>
+                <div class="bi-desc">4,000km destroys shoes. Multiple pairs needed to make it to Bondi Beach.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">☀️</span>
+              <div>
+                <div class="bi-title">Solar Power Hardware &amp; Life-Support Gear</div>
+                <div class="bi-desc">200W solar blanket, power banks, and field repair kit keeping everything alive in the outback.</div>
+              </div>
+            </li>
+          </ul>
         </div>
 
-        <div class="fund-footnote">
-          Every dollar goes directly to <strong style="color: var(--text-secondary);">Men's Talk</strong> — supporting men's mental health across Australia. &nbsp;&middot;&nbsp;
-          <a href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer" style="color: var(--green-light); font-weight: 600;">Visit Men's Talk ↗</a>
-        </div>
       </div>
 
     </div>
-  </section>
-
+  </div>
 
   <hr class="divider" />
 
 
-  <!-- ============================================================ THE RIG -->
-  <section class="section" id="rig">
-    <div class="wrap">
-      <div class="section-header">
-        <div class="section-kicker">Mission Equipment</div>
-        <h2 class="section-title">The Rig</h2>
-        <p class="section-desc">No support crew. No second chances. Every gram counts — this is the kit that makes 4,000km possible.</p>
-      </div>
-
-      <div class="rig-grid">
-        <div class="rig-card">
-          <div class="rig-icon">🦯</div>
-          <div class="rig-number">System 01</div>
-          <div class="rig-title">The Buggy</div>
-          <div class="rig-subtitle">Custom-Built Endurance Stroller</div>
-          <div class="rig-desc">A custom-modified endurance running buggy engineered for this mission. Carrying food, water, shelter, power and cameras across 4,000km of Australian highway — fully loaded at 45kg.</div>
-          <div class="rig-specs">
-            <div class="rig-spec">Custom-built frame for endurance terrain</div>
-            <div class="rig-spec">45kg max loaded weight</div>
-            <div class="rig-spec">Designed for ~57km daily distance</div>
-            <div class="rig-spec">All-weather, desert-ready construction</div>
-          </div>
-        </div>
-
-        <div class="rig-card">
-          <div class="rig-icon">☀️</div>
-          <div class="rig-number">System 02</div>
-          <div class="rig-title">The Power</div>
-          <div class="rig-subtitle">200W Ridge Ryder Solar Blanket</div>
-          <div class="rig-desc">A 200W flexible solar blanket draped across the buggy charges all electronics on the move. Running through some of the sunniest terrain on Earth — near-constant power generation across the Nullarbor.</div>
-          <div class="rig-specs">
-            <div class="rig-spec">200W Ridge Ryder solar blanket</div>
-            <div class="rig-spec">Charges drone, cameras &amp; sat comms</div>
-            <div class="rig-spec">Satellite comms — always connected</div>
-            <div class="rig-spec">Portable power bank backup system</div>
-          </div>
-        </div>
-
-        <div class="rig-card">
-          <div class="rig-icon">🎥</div>
-          <div class="rig-number">System 03</div>
-          <div class="rig-title">The Capture</div>
-          <div class="rig-subtitle">4K Drone &amp; GoPro Documentary Gear</div>
-          <div class="rig-desc">Every step documented for the world to follow. A DJI Air 2S captures sweeping aerial footage of the outback. GoPros run chest and buggy-mounted — relentless ground-level reality.</div>
-          <div class="rig-specs">
-            <div class="rig-spec">DJI Air 2S — 4K aerial camera</div>
-            <div class="rig-spec">GoPro chest &amp; buggy-mount rigs</div>
-            <div class="rig-spec">Solar-recharged in the field daily</div>
-            <div class="rig-spec">Content drops across all platforms</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <hr class="divider" />
-
-
-  <!-- ============================================================ SOCIAL -->
-  <section class="section" id="social">
+  <!-- ================================================================
+       SOCIAL
+  ================================================================ -->
+  <section class="section-sm" id="social">
     <div class="wrap">
       <div class="section-header">
         <div class="section-kicker">Follow the Journey</div>
         <h2 class="section-title">Stay Connected</h2>
-        <p class="section-desc">Daily updates, raw footage, and the full documentary — follow along across all platforms.</p>
+        <p class="section-desc">Daily updates, drone footage, and the full documentary — follow along on all platforms.</p>
       </div>
-
       <div class="social-grid">
-
         <a class="social-btn" href="https://youtube.com/@brindledoesthings?si=iw9XXewANBb9wuAi" target="_blank" rel="noopener noreferrer">
           <div class="social-icon-wrap yt">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8ZM9.7 15.7V8.3l6.5 3.7-6.5 3.7Z"/></svg>
@@ -1373,7 +1156,6 @@
           <div class="social-name">YouTube</div>
           <div class="social-handle">Full expedition vlogs &amp; documentary</div>
         </a>
-
         <a class="social-btn" href="https://www.tiktok.com/@brindledoesthings?_r=1&_t=ZS-95JTexu56Qv" target="_blank" rel="noopener noreferrer">
           <div class="social-icon-wrap tt">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 1H12v15.4a2.7 2.7 0 1 1-2.7-2.7c.3 0 .6 0 .9.1V9.1a7.4 7.4 0 0 0-.9-.1A7.3 7.3 0 1 0 16.6 16V8.2a8.4 8.4 0 0 0 4.9 1.6V5.2a4.8 4.8 0 0 1-4.9-4.2Z"/></svg>
@@ -1381,7 +1163,6 @@
           <div class="social-name">TikTok</div>
           <div class="social-handle">Daily short-form content from the road</div>
         </a>
-
         <a class="social-btn" href="https://www.instagram.com/brindledoes.things?igsh=c3Y4NWZ4YTQzZGZx" target="_blank" rel="noopener noreferrer">
           <div class="social-icon-wrap ig">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 1.9A3.9 3.9 0 0 0 3.9 7.8v8.4a3.9 3.9 0 0 0 3.9 3.9h8.4a3.9 3.9 0 0 0 3.9-3.9V7.8a3.9 3.9 0 0 0-3.9-3.9H7.8Zm8.8 1.5a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.9A3.1 3.1 0 1 0 12 15a3.1 3.1 0 0 0 0-6.2Z"/></svg>
@@ -1389,205 +1170,161 @@
           <div class="social-name">Instagram</div>
           <div class="social-handle">Photos, reels &amp; stories from the road</div>
         </a>
-
       </div>
     </div>
   </section>
 
 
-  <hr class="divider" />
-
-
-  <!-- ============================================================ MANIFESTO -->
-  <section class="section" id="manifesto">
-    <div class="wrap">
-      <div class="section-header">
-        <div class="section-kicker">The Mission</div>
-        <h2 class="section-title">Why 4,000km<br />on foot?</h2>
-      </div>
-
-      <div class="manifesto-grid">
-        <div class="manifesto-left">
-          <div class="manifesto-body">
-            <p>
-              <strong>Because men are dying.</strong> Not from the desert heat. Not from the kilometres. They're dying because they don't talk. Men's mental health is in crisis across Australia — and the silence is the killer.
-            </p>
-            <p>
-              Running 4,000km from Perth's Scarborough Beach to Sydney's Bondi Beach — unsupported, pushing a 45kg buggy over 70 days — isn't a stunt. It's a statement. If one person can push that far without stopping, we can all take one step toward a conversation we've been avoiding.
-            </p>
-            <div class="manifesto-quote">
-              <p>"Every km I run is a km I'm not staying silent. Every donation gets a man into a room where it's safe to speak."</p>
-            </div>
-            <p>
-              <strong>Men's Talk</strong> provides real, accessible mental health support for men across Australia. Your donation funds counselling, peer support programs, and the kind of conversations that save lives.
-            </p>
-            <p>
-              The buggy, the solar gear, the drone footage — none of it matters unless people see it, share it, and decide this mission is worth backing. Follow along. Tell someone. And if you can, donate.
-            </p>
-          </div>
-          <div style="margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap;">
-            <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-            <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer">💚 Back the Mission — Donate</a>
-            <a class="btn btn-ghost" href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer">Men's Talk ↗</a>
-          </div>
-        </div>
-
-        <div class="manifesto-right">
-          <div class="fact-card">
-            <div class="fact-icon">📊</div>
-            <div>
-              <div class="fact-title">The Stats Don't Lie</div>
-              <div class="fact-body">75% of all suicides in Australia are men. Men are significantly less likely to seek help — and significantly more likely to suffer in silence. Men's Talk is changing that.</div>
-            </div>
-          </div>
-          <div class="fact-card">
-            <div class="fact-icon">🏔️</div>
-            <div>
-              <div class="fact-title">Unsupported. No Crew.</div>
-              <div class="fact-body">No support vehicle. No team. Just one person, one buggy, and 4,000km of Australian highway. The hardest part isn't the running — it's doing it alone. Sound familiar?</div>
-            </div>
-          </div>
-          <div class="fact-card">
-            <div class="fact-icon">⚡</div>
-            <div>
-              <div class="fact-title">Solar-Powered Mission</div>
-              <div class="fact-body">A 200W solar blanket keeps the drone, cameras, and satellite comms alive across the Nullarbor. No moment goes unrecorded — the whole journey is documented.</div>
-            </div>
-          </div>
-          <div class="fact-card">
-            <div class="fact-icon">🎯</div>
-            <div>
-              <div class="fact-title">$100,000 Target</div>
-              <div class="fact-body">Every dollar goes directly to Men's Talk. The goal is real, the cause is urgent, and your support — even $10 — genuinely matters. Share this page if you can't donate.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ============================================================ FOOTER -->
+  <!-- ================================================================ FOOTER -->
   <footer>
     <div class="footer-inner">
       <div>
         <div class="footer-brand">Brindle <span>Does Things</span></div>
         <div class="footer-cause">
-          4,000km for
-          <a href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer">Men's Talk</a>
-          — Men's Mental Health Australia
+          4,000km for <a href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer">Men's Talk</a> — Men's Mental Health Australia
         </div>
       </div>
-      <div style="display:flex; gap: 12px; flex-wrap: wrap;">
-        <a class="btn btn-ghost" href="https://youtube.com/@brindledoesthings?si=iw9XXewANBb9wuAi" target="_blank" rel="noopener noreferrer" style="padding: 8px 16px; font-size: 13px;">YouTube</a>
-        <a class="btn btn-ghost" href="https://www.tiktok.com/@brindledoesthings?_r=1&_t=ZS-95JTexu56Qv" target="_blank" rel="noopener noreferrer" style="padding: 8px 16px; font-size: 13px;">TikTok</a>
-        <a class="btn btn-ghost" href="https://www.instagram.com/brindledoes.things?igsh=c3Y4NWZ4YTQzZGZx" target="_blank" rel="noopener noreferrer" style="padding: 8px 16px; font-size: 13px;">Instagram</a>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <a class="btn btn-ghost" href="https://youtube.com/@brindledoesthings?si=iw9XXewANBb9wuAi" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">YouTube</a>
+        <a class="btn btn-ghost" href="https://www.tiktok.com/@brindledoesthings?_r=1&_t=ZS-95JTexu56Qv" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">TikTok</a>
+        <a class="btn btn-ghost" href="https://www.instagram.com/brindledoes.things?igsh=c3Y4NWZ4YTQzZGZx" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">Instagram</a>
+        <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer" style="padding:8px 16px;font-size:12px;">☕ Coffee</a>
         <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-        <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer" style="padding: 8px 16px; font-size: 13px;">💚 Donate</a>
+        <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">💚 Donate</a>
       </div>
     </div>
   </footer>
 
 
-  <!-- ============================================================
+  <!-- ================================================================
        JAVASCRIPT
-       loadLiveStats() fetches ./data.json (written by the GitHub Action)
-       and updates all live elements on the page.
+       ════════════════════════════════════════════════════════════════
+       Three jobs:
+         1. VIDEO PLACEHOLDER — hides it once a real video ID is set.
+         2. DATE GATE — checks today vs LAUNCH_DATE, then either:
+              • Shows the countdown and starts ticking every second, OR
+              • Shows the live stats block and fetches data.json
+         3. LOAD LIVE STATS — reads data.json and updates the UI.
 
-       data.json expected shape:
+       LAUNCH_DATE: update this if the start date ever changes.
+
+       data.json shape (written by GitHub Actions sync_stats.yml):
        {
-         "current_km":    400,
-         "total_raised":  2500,
-         "current_day":   7,
-         "location":      "Norseman, WA",
-         "last_updated":  "2025-01-15T08:30:00Z",
-         "lat":           -32.195,
-         "lng":           121.778
+         "current_km":   400,
+         "total_raised": 1200,
+         "current_day":  7,
+         "location":     "Norseman, WA",
+         "last_updated": "2026-08-22T08:30:00Z",
+         "lat":          -32.195,
+         "lng":          121.778
        }
-  ============================================================ -->
+  ================================================================ -->
   <script>
-    // ── Hide map placeholder if a real Garmin src is already set ──────────
-    (function() {
-      var iframe = document.querySelector('.map-iframe-wrap iframe');
-      var ph = document.getElementById('map-ph');
-      if (iframe && ph) {
-        var src = (iframe.getAttribute('src') || '').trim();
-        if (src && src !== '#') { ph.style.display = 'none'; }
+    /* ─── Config ─────────────────────────────────────────────────────── */
+    var LAUNCH_DATE = new Date('2026-08-15T06:00:00+08:00'); // 6am AWST Perth
+    var TOTAL_KM    = 4000;
+    var GOAL_AUD    = 10000;
+
+    /* ─── Helpers ────────────────────────────────────────────────────── */
+    function fmtNum(n)   { return Math.round(n).toLocaleString('en-AU'); }
+    function fmtMoney(n) { return '$' + fmtNum(n); }
+    function pad2(n)     { return String(n).padStart(2, '0'); }
+
+    /* ─── 1. Video placeholder ───────────────────────────────────────── */
+    (function () {
+      var iframe = document.getElementById('yt-embed');
+      var ph     = document.getElementById('video-ph');
+      if (iframe && ph && iframe.getAttribute('src').indexOf('YOUR_VIDEO_ID') === -1) {
+        ph.style.display = 'none';
       }
     })();
 
-    // ── Helper: format a number with commas ───────────────────────────────
-    function fmtNum(n) {
-      return Math.round(n).toLocaleString('en-AU');
+    /* ─── 2. Date gate ───────────────────────────────────────────────── */
+    var launched        = new Date() >= LAUNCH_DATE;
+    var elCountdown     = document.getElementById('state-countdown');
+    var elLive          = document.getElementById('state-live');
+    var elKicker        = document.getElementById('tracker-kicker');
+    var elTitle         = document.getElementById('tracker-title');
+    var elDesc          = document.getElementById('tracker-desc');
+    var elLocPill       = document.getElementById('live-location');
+
+    if (launched) {
+      /* POST-LAUNCH */
+      elLive.style.display  = 'block';
+      elKicker.textContent  = 'Live Route Tracker';
+      elTitle.innerHTML     = 'The Mission<br />is Live';
+      elDesc.textContent    = 'Stats update every hour via Garmin satellite data.';
+      loadLiveStats();
+    } else {
+      /* PRE-LAUNCH */
+      elCountdown.style.display = 'block';
+      elLocPill.textContent     = 'Mission Launches: 15 August 2026';
+      tickCountdown();
+      setInterval(tickCountdown, 1000);
     }
 
-    // ── Helper: format currency ───────────────────────────────────────────
-    function fmtMoney(n) {
-      return '$' + fmtNum(n);
+    /* ─── Countdown tick (runs every second pre-launch) ──────────────── */
+    function tickCountdown() {
+      var diff = LAUNCH_DATE - new Date();
+
+      if (diff <= 0) {
+        /* Flip states without a page reload */
+        elCountdown.style.display = 'none';
+        elLive.style.display      = 'block';
+        elKicker.textContent      = 'Live Route Tracker';
+        elTitle.innerHTML         = 'The Mission<br />is Live';
+        elDesc.textContent        = 'Stats update every hour via Garmin satellite data.';
+        loadLiveStats();
+        return;
+      }
+
+      var secs  = Math.floor(diff / 1000);
+      var days  = Math.floor(secs / 86400);
+      var hours = Math.floor((secs % 86400) / 3600);
+      var mins  = Math.floor((secs % 3600) / 60);
+
+      document.getElementById('cd-days').textContent  = days;
+      document.getElementById('cd-hours').textContent = pad2(hours);
+      document.getElementById('cd-mins').textContent  = pad2(mins);
     }
 
-    // ── loadLiveStats — fetches data.json and updates the UI ──────────────
+    /* ─── 3. Load live stats from data.json ──────────────────────────── */
     async function loadLiveStats() {
       var statusEl = document.getElementById('data-status');
-
       try {
-        // Bust the cache so the browser always gets the freshest file
         var res = await fetch('./data.json?t=' + Date.now());
         if (!res.ok) throw new Error('HTTP ' + res.status);
         var d = await res.json();
 
-        var TOTAL_KM   = 4000;
-        var GOAL_AUD   = 100000;
-
-        // ── Route progress bar ───────────────────────────────────────────
-        var kmDone  = parseFloat(d.current_km)  || 0;
-        var kmPct   = Math.min((kmDone / TOTAL_KM) * 100, 100).toFixed(2);
-        var kmLeft  = Math.max(TOTAL_KM - kmDone, 0);
-
+        /* Route progress */
+        var kmDone = parseFloat(d.current_km) || 0;
+        var kmPct  = Math.min((kmDone / TOTAL_KM) * 100, 100).toFixed(2);
+        var kmLeft = Math.max(TOTAL_KM - kmDone, 0);
         document.getElementById('route-fill').style.width = kmPct + '%';
-        document.getElementById('stat-km').innerHTML =
-          fmtNum(kmDone) + ' <span style="font-size:1rem;">km</span>';
-        document.getElementById('stat-remaining').innerHTML =
-          fmtNum(kmLeft) + ' <span style="font-size:1rem;">km</span>';
+        document.getElementById('stat-km').innerHTML      = fmtNum(kmDone) + ' <span style="font-size:1rem;">km</span>';
+        document.getElementById('stat-remaining').innerHTML = fmtNum(kmLeft) + ' <span style="font-size:1rem;">km</span>';
 
-        // ── Day counter ──────────────────────────────────────────────────
-        var day = parseInt(d.current_day) || '—';
-        document.getElementById('stat-day').textContent = 'Day ' + day;
+        /* Day counter */
+        document.getElementById('stat-day').textContent = 'Day ' + (parseInt(d.current_day) || '—');
 
-        // ── Fundraising bar ──────────────────────────────────────────────
-        var raised   = parseFloat(d.total_raised) || 0;
-        var fundPct  = Math.min((raised / GOAL_AUD) * 100, 100).toFixed(2);
-
+        /* Fundraising bar */
+        var raised  = parseFloat(d.total_raised) || 0;
+        var fundPct = Math.min((raised / GOAL_AUD) * 100, 100).toFixed(2);
         document.getElementById('fund-fill').style.width = fundPct + '%';
         document.getElementById('stat-raised').innerHTML =
-          fmtMoney(raised) +
-          ' <span style="font-size:1.2rem;color:var(--text-muted);font-weight:600;">/ $100,000 AUD</span>';
+          fmtMoney(raised) + ' <span style="font-size:1rem;color:var(--text-muted);font-weight:600;">/ $10,000 AUD</span>';
 
-        // ── Live location pill ───────────────────────────────────────────
-        var loc = d.location || 'En Route';
-        document.getElementById('live-location').textContent = 'Current Location: ' + loc;
+        /* Live location pill */
+        elLocPill.textContent = 'Current Location: ' + (d.location || 'En Route');
 
-        // ── GPS coords in map footer ─────────────────────────────────────
-        if (d.lat && d.lng) {
-          var ts = d.last_updated ? new Date(d.last_updated).toLocaleString('en-AU', { timeZone: 'Australia/Sydney', hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }) : '';
-          document.getElementById('map-coords').textContent =
-            '📍 ' + parseFloat(d.lat).toFixed(4) + ', ' + parseFloat(d.lng).toFixed(4) +
-            (ts ? '  ·  Updated: ' + ts + ' AEST' : '');
-        }
-
-        // ── Status indicator ─────────────────────────────────────────────
-        statusEl.className = 'data-status ok';
-        statusEl.textContent = '✅ Live — stats updated every hour';
+        /* Status badge */
+        if (statusEl) { statusEl.className = 'data-status ok'; statusEl.textContent = '✅ Live — updated every hour'; }
 
       } catch (err) {
-        console.warn('loadLiveStats: could not load data.json —', err.message);
-        statusEl.className = 'data-status err';
-        statusEl.textContent = '⚠️ Stats unavailable — showing last known data';
+        console.warn('loadLiveStats:', err.message);
+        if (statusEl) { statusEl.className = 'data-status err'; statusEl.textContent = '⚠️ Stats unavailable — check back soon'; }
       }
     }
-
-    // Run on page load
-    loadLiveStats();
   </script>
 
 </body>
