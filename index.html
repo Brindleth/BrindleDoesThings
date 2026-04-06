@@ -4,37 +4,381 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brindle Does Things — 4,000km Perth to Sydney</title>
-  <meta name="description" content="An unsupported 4,000km run from Perth (Scarborough Beach) to Sydney (Bondi Beach) in 70 days, raising $100,000 AUD for Men's Talk — Men's Mental Health." />
+  <meta name="description" content="An unsupported 4,000km run from Perth to Sydney in 70 days. Launching August 15, 2026. Raising $10,000 AUD for Men's Talk." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* ============================================================
-       CSS CUSTOM PROPERTIES — edit to retheme instantly
-    ============================================================ */
+    /* ====================================================================
+       CSS CUSTOM PROPERTIES — edit here to retheme the entire page
+    ==================================================================== */
     :root {
-      --bg-base:          #020617;
-      --bg-layer:         #050d1a;
-      --bg-surface:       #0a1628;
-      --bg-card:          #0d1e36;
-      --bg-card-hover:    #112440;
-      --border-dim:       rgba(255,255,255,0.06);
-      --border-mid:       rgba(255,255,255,0.10);
-      --border-bright:    rgba(255,255,255,0.18);
-      --orange:           #f97316;
-      --orange-light:     #fb923c;
-      --orange-dim:       rgba(249,115,22,0.15);
-      --orange-glow:      rgba(249,115,22,0.25);
-      --green:            #22c55e;
-      --green-light:      #4ade80;
-      --green-dim:        rgba(34,197,94,0.12);
-      --green-glow:       rgba(34,197,94,0.30);
-      --text-primary:     #f1f5f9;
-      --text-secondary:   #94a3b8;
-      --text-muted:       #4b6075;
-      --font-display:     'Barlow Condensed', sans-serif;
+      --bg-base:        #020617;
+      --bg-layer:       #050d1a;
+      --bg-surface:     #0a1628;
+      --bg-card:        #0d1e36;
+      --bg-card-hover:  #112440;
+      --border-dim:     rgba(255,255,255,0.06);
+      --border-mid:     rgba(255,255,255,0.10);
+      --border-bright:  rgba(255,255,255,0.18);
+      --orange:         #f97316;
+      --orange-light:   #fb923c;
+      --orange-dim:     rgba(249,115,22,0.15);
+      --orange-glow:    rgba(249,115,22,0.25);
+      --green:          #22c55e;
+      --green-light:    #4ade80;
+      --green-dim:      rgba(34,197,94,0.12);
+      --green-glow:     rgba(34,197,94,0.30);
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #4b6075;
+      --font-display:   'Barlow Condensed', sans-serif;
+      --font-body:      'Barlow', sans-serif;
+      --radius-sm:      8px;
+      --radius-md:      14px;
+      --radius-lg:      22px;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      background-color: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-body); font-size: 16px; line-height: 1.65;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Tactical background glow + grid ── */
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(249,115,22,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(34,197,94,0.05) 0%, transparent 60%),
+        linear-gradient(180deg, #020617 0%, #03091a 100%);
+    }
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.016) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.016) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ── Layout ── */
+    .wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 1240px;
+      margin: 0 auto; padding: 0 24px;
+    }
+    .section    { padding: 96px 0; }
+    .section-sm { padding: 64px 0; }
+    .divider    { border: none; border-top: 1px solid var(--border-dim); }
+
+    /* ====================================================================
+       NAV
+    ==================================================================== */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      padding: 0 24px;
+      background: rgba(2,6,23,0.92);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border-dim);
+    }
+    .nav-inner {
+      max-width: 1240px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; gap: 16px;
+    }
+    .nav-brand { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: 0.05em; text-transform: uppercase; flex-shrink: 0; }
+    .nav-brand span { color: var(--orange); }
+    .nav-links { display: flex; align-items: center; gap: 2px; }
+    .nav-links a {
+      font-family: var(--font-display); font-weight: 600; font-size: 13px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);
+      padding: 6px 10px; border-radius: var(--radius-sm); transition: color 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--text-primary); background: var(--border-dim); }
+
+    /* ====================================================================
+       BUTTONS
+    ==================================================================== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 28px; border-radius: var(--radius-md);
+      font-family: var(--font-display); font-weight: 700; font-size: 16px;
+      letter-spacing: 0.08em; text-transform: uppercase; border: none; cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-orange { background: var(--orange); color: #fff; box-shadow: 0 4px 24px var(--orange-dim); }
+    .btn-orange:hover { background: var(--orange-light); box-shadow: 0 8px 32px var(--orange-glow); }
+    .btn-green  { background: var(--green);  color: #000; box-shadow: 0 4px 24px var(--green-dim); }
+    .btn-green:hover  { background: var(--green-light); box-shadow: 0 8px 32px var(--green-glow); }
+    .btn-ghost  { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-mid); }
+    .btn-ghost:hover { color: var(--text-primary); border-color: var(--border-bright); background: var(--border-dim); }
+
+    /* ====================================================================
+       SECTION HEADERS
+    ==================================================================== */
+    .section-header { margin-bottom: 48px; }
+    .section-kicker {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-display); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px;
+    }
+    .section-kicker::before { content: ''; display: block; width: 20px; height: 2px; background: var(--orange); }
+    .section-title {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: clamp(2.5rem, 5vw, 4rem); line-height: 0.95;
+      text-transform: uppercase; letter-spacing: -0.01em; color: var(--text-primary); margin-bottom: 16px;
+    }
+    .section-desc { font-size: 17px; color: var(--text-secondary); max-width: 60ch; line-height: 1.7; }
+
+    /* ── Live pill ── */
+    .live-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px 6px 10px; border-radius: 999px;
+      background: var(--green-dim); border: 1px solid rgba(34,197,94,0.28);
+      font-family: var(--font-display); font-size: 13px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-light); white-space: nowrap;
+    }
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+      box-shadow: 0 0 0 0 var(--green-glow); animation: pulse-dot 2s ease-out infinite; flex-shrink: 0;
+    }
+    @keyframes pulse-dot {
+      0%  { box-shadow: 0 0 0 0 var(--green-glow); }
+      60% { box-shadow: 0 0 0 8px transparent; }
+      100%{ box-shadow: 0 0 0 0 transparent; }
+    }
+
+    /* ── Tag pill ── */
+    .tag-pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px;
+      background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.22);
+      font-family: var(--font-display); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange-light);
+    }
+
+    /* ── Meta chip ── */
+    .meta-chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+      border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-mid);
+      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+    }
+
+    /* ── Fade-up animation ── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ====================================================================
+       ① HERO
+    ==================================================================== */
+    .hero { padding: 80px 0 72px; position: relative; z-index: 1; }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
+      animation: fade-up 0.5s ease both 0.05s;
+    }
+    .hero-headline {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: clamp(4.5rem, 11vw, 10rem); line-height: 0.9;
+      letter-spacing: -0.02em; text-transform: uppercase; color: var(--text-primary);
+      margin-bottom: 16px; animation: fade-up 0.6s ease both 0.1s;
+    }
+    .hero-headline em { font-style: italic; color: var(--orange); }
+    .hero-sub {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(1.5rem, 3.5vw, 2.6rem); letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--text-secondary); margin-bottom: 32px;
+      animation: fade-up 0.6s ease both 0.2s;
+    }
+    .hero-sub span { color: var(--orange-light); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; animation: fade-up 0.5s ease both 0.3s; }
+    .hero-cta-row { display: flex; flex-wrap: wrap; gap: 12px; animation: fade-up 0.5s ease both 0.4s; }
+
+    /* ── Stat strip ── */
+    .stat-strip {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border-dim); border-bottom: 1px solid var(--border-dim);
+      background: var(--bg-layer);
+    }
+    .stat-strip-inner { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .stat-block { padding: 24px 28px; border-right: 1px solid var(--border-dim); }
+    .stat-block:last-child { border-right: none; }
+    .stat-value {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: clamp(1.8rem, 3vw, 3rem); line-height: 1;
+      letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 4px;
+    }
+    .stat-unit { font-size: 0.5em; font-weight: 600; color: var(--text-muted); }
+    .stat-label { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+
+    /* ====================================================================
+       ② FEATURED VIDEO
+    ==================================================================== */
+    .video-section { padding: 80px 0; position: relative; z-index: 1; }
+    .video-wrap {
+      position: relative; border-radius: var(--radius-lg); overflow: hidden;
+      border: 1px solid var(--border-mid); box-shadow: 0 32px 96px rgba(0,0,0,0.6); background: #000;
+    }
+    .video-ratio { position: relative; width: 100%; padding-bottom: 56.25%; }
+    .video-ratio iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+    .video-placeholder {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 20px; text-align: center; padding: 40px; background: var(--bg-card);
+    }
+    .video-play-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--orange); display: flex; align-items: center; justify-content: center;
+      font-size: 28px; color: #fff; box-shadow: 0 0 40px var(--orange-glow);
+      animation: pulse-play 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-play {
+      0%, 100% { box-shadow: 0 0 40px var(--orange-glow); transform: scale(1); }
+      50%       { box-shadow: 0 0 70px var(--orange-glow); transform: scale(1.05); }
+    }
+    .video-placeholder h3 {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: clamp(1.5rem, 3vw, 2.4rem); text-transform: uppercase;
+      letter-spacing: 0.02em; color: var(--text-primary);
+    }
+    .video-placeholder p { font-size: 15px; color: var(--text-muted); max-width: 40ch; }
+    .video-placeholder code {
+      display: inline-block; padding: 4px 10px; border-radius: var(--radius-sm);
+      background: var(--bg-surface); border: 1px solid var(--border-mid);
+      font-family: monospace; font-size: 13px; color: var(--orange-light);
+    }
+
+    /* ====================================================================
+       ③ COUNTDOWN / LIVE TRACKER
+       JS shows #state-countdown (pre-launch) or #state-live (post-launch)
+    ==================================================================== */
+    #state-countdown, #state-live { display: none; }
+
+    /* ── Countdown ── */
+    .countdown-wrap {
+      text-align: center; padding: 64px 32px;
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      border: 1px solid var(--border-mid); box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+      position: relative; overflow: hidden;
+    }
+    .countdown-wrap::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+    }
+    .countdown-label {
+      font-family: var(--font-display); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 16px;
+    }
+    .countdown-date {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(1rem, 2.5vw, 1.4rem); letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-secondary); margin-bottom: 40px;
+    }
+    .countdown-date strong { color: var(--text-primary); }
+    .countdown-digits {
+      display: flex; align-items: flex-start; justify-content: center;
+      gap: clamp(8px, 3vw, 40px); flex-wrap: wrap;
+    }
+    .cd-unit { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .cd-num {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: clamp(4rem, 14vw, 10rem); line-height: 1;
+      letter-spacing: -0.03em; color: var(--text-primary);
+      font-variant-numeric: tabular-nums; min-width: 2ch; text-align: center;
+    }
+    .cd-num.orange { color: var(--orange); }
+    .cd-sep {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: clamp(3rem, 10vw, 7rem); line-height: 1;
+      color: var(--border-bright); align-self: flex-start; padding-top: 4px;
+    }
+    .cd-label {
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .countdown-cta { margin-top: 48px; display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+
+    /* ── Live route tracker ── */
+    .route-wrap {
+      background: var(--bg-card); border: 1px solid var(--border-mid);
+      border-radius: var(--radius-lg); padding: 40px 40px 36px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+    }
+    .route-cities { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .route-city { display: flex; flex-direction: column; gap: 2px; }
+    .city-name { font-family: var(--font-display); font-weight: 900; font-size: 1.6rem; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1; color: var(--text-primary); }
+    .city-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+    .route-city.end .city-name, .route-city.end .city-label { text-align: right; }
+    .route-distance { font-family: var(--font-display); font-weight: 800; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+    .route-track { position: relative; height: 28px; background: var(--bg-surface); border-radius: 999px; overflow: visible; margin-bottom: 12px; border: 1px solid var(--border-dim); }
+    .route-fill {
+      position: absolute; top: 0; left: 0; height: 100%; width: 0%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--green) 0%, var(--green-light) 100%);
+      box-shadow: 0 0 20px var(--green-glow); transition: width 1.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .route-runner {
+      position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--green); border: 3px solid var(--bg-base);
+      box-shadow: 0 0 12px var(--green-glow);
+      display: flex; align-items: center; justify-content: center; font-size: 13px;
+    }
+    .route-milestones { display: flex; justify-content: space-between; margin-bottom: 28px; }
+    .milestone { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+    .route-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border-dim); border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-dim); }
+    .route-stat { padding: 20px 24px; background: var(--bg-surface); }
+    .rs-label { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .rs-value { font-family: var(--font-display); font-weight: 900; font-size: 1.8rem; line-height: 1; color: var(--text-primary); letter-spacing: -0.01em; }
+    .rs-value.green  { color: var(--green-light); }
+    .rs-value.orange { color: var(--orange-light); }
+    .data-status { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-top: 8px; }
+    .data-status.ok  { color: var(--green-light); }
+    .data-status.err { color: var(--orange-light); }
+
+    /* ====================================================================
+       ④ SATELLITE TRACKER PLACEHOLDER
+    ==================================================================== */
+    .sat-wrap {
+      border-radius: var(--radius-lg); overflow: hidden;
+      border: 1px solid var(--border-mid); box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+    .sat-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 22px; background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-dim); gap: 12px; flex-wrap: wrap;
+    }
+    .sat-topbar-left { display: flex; align-items: center; gap: 10px; }
+    .sat-topbar-title { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-primary); }
+    .map-badge {
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: var(--radius-sm);
+      background: rgba(249,115,22,0.10); border: 1px solid rgba(249,115,22,0.18);
+      font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange-light);
+    }
+    .sat-body {
+      min-height: 380px; background: var(--bg-card);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 24px; text-align: center; padding: 48px 32px;
+      position: relative; overflow: hidden;
+    }
+    /* Animated radar rings */
+    .sat-body::before {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 600px; height: 600px; border-radius: 50%;
+      border: 1px solid rgba(34,197,94,0.07);
+      animation: radar 4s linear infinite;
+    }
+    .sat-body::after {
+      content: ''; position: absolute; top: 50%; left: 50%;      --font-display:     'Barlow Condensed', sans-serif;
       --font-body:        'Barlow', sans-serif;
       --radius-sm:        8px;
       --radius-md:        14px;
