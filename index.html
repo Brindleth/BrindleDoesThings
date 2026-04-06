@@ -414,6 +414,208 @@
     .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .social-btn {
       display: flex; flex-direction: column; align-items: center; gap: 12px;
+      padding: 32px 20px; border-radius: var(--radabel {
+      font-family: var(--font-display); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted);
+    }
+
+    /* ============================================================ MAP */
+    .map-container {
+      border-radius: var(--radius-lg); overflow: hidden;
+      border: 1px solid var(--border-mid); background: var(--bg-card);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+    .map-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px; background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-dim); gap: 16px; flex-wrap: wrap;
+    }
+    .map-topbar-left { display: flex; align-items: center; gap: 12px; }
+    .map-topbar-title {
+      font-family: var(--font-display); font-weight: 700; font-size: 14px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-primary);
+    }
+    .map-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: var(--radius-sm);
+      background: rgba(249,115,22,0.10); border: 1px solid rgba(249,115,22,0.18);
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange-light);
+    }
+    .map-iframe-wrap {
+      position: relative; width: 100%; padding-bottom: 52%;
+      background: var(--bg-card); min-height: 320px;
+    }
+    .map-iframe-wrap iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block;
+    }
+    .map-placeholder {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; text-align: center; padding: 32px; background: var(--bg-card);
+    }
+    .map-placeholder-icon {
+      width: 64px; height: 64px; border-radius: 50%; background: var(--border-dim);
+      display: flex; align-items: center; justify-content: center; font-size: 28px;
+    }
+    .map-placeholder h3 {
+      font-family: var(--font-display); font-weight: 800; font-size: 1.4rem;
+      text-transform: uppercase; color: var(--text-secondary);
+    }
+    .map-placeholder p { font-size: 14px; color: var(--text-muted); max-width: 36ch; }
+    .map-placeholder code {
+      display: inline-block; padding: 4px 10px; border-radius: var(--radius-sm);
+      background: var(--bg-surface); border: 1px solid var(--border-mid);
+      font-family: monospace; font-size: 13px; color: var(--orange-light);
+    }
+    .map-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; background: var(--bg-surface);
+      border-top: 1px solid var(--border-dim); gap: 16px; flex-wrap: wrap;
+    }
+    .map-coord { font-family: monospace; font-size: 13px; color: var(--text-muted); }
+
+    /* ============================================================ ROUTE PROGRESS */
+    .route-wrap {
+      background: var(--bg-card); border: 1px solid var(--border-mid);
+      border-radius: var(--radius-lg); padding: 40px 40px 36px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+    }
+    .route-cities { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .route-city { display: flex; flex-direction: column; gap: 2px; }
+    .city-name {
+      font-family: var(--font-display); font-weight: 900; font-size: 1.6rem;
+      text-transform: uppercase; letter-spacing: 0.04em; line-height: 1; color: var(--text-primary);
+    }
+    .city-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+    .route-city.end .city-name,
+    .route-city.end .city-label { text-align: right; }
+    .route-distance {
+      font-family: var(--font-display); font-weight: 800; font-size: 13px;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .route-track {
+      position: relative; height: 28px; background: var(--bg-surface);
+      border-radius: 999px; overflow: visible; margin-bottom: 12px;
+      border: 1px solid var(--border-dim);
+    }
+    /* Route fill — width set dynamically by loadLiveStats() */
+    .route-fill {
+      position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--green) 0%, var(--green-light) 100%);
+      box-shadow: 0 0 20px var(--green-glow);
+      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .route-runner {
+      position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--green); border: 3px solid var(--bg-base);
+      box-shadow: 0 0 12px var(--green-glow);
+      display: flex; align-items: center; justify-content: center; font-size: 13px;
+    }
+    .route-milestones { display: flex; justify-content: space-between; margin-bottom: 28px; }
+    .milestone {
+      font-family: var(--font-display); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .route-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border-dim);
+      border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-dim);
+    }
+    .route-stat { padding: 20px 24px; background: var(--bg-surface); }
+    .rs-label {
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .rs-value {
+      font-family: var(--font-display); font-weight: 900; font-size: 1.8rem;
+      line-height: 1; color: var(--text-primary); letter-spacing: -0.01em;
+    }
+    .rs-value.green  { color: var(--green-light); }
+    .rs-value.orange { color: var(--orange-light); }
+
+    /* Fundraising bar — width set dynamically */
+    .fund-wrap {
+      background: var(--bg-card); border: 1px solid var(--border-mid);
+      border-radius: var(--radius-lg); padding: 36px 40px; margin-top: 24px;
+    }
+    .fund-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .fund-amount {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1;
+      letter-spacing: -0.02em; color: var(--text-primary);
+    }
+    .fund-track {
+      height: 16px; background: var(--bg-surface); border-radius: 999px;
+      overflow: hidden; border: 1px solid var(--border-dim); margin-bottom: 12px;
+    }
+    .fund-fill {
+      height: 100%; width: 0%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--orange) 0%, var(--orange-light) 100%);
+      box-shadow: 0 0 16px var(--orange-glow);
+      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fund-footnote { font-size: 13px; color: var(--text-muted); }
+
+    /* ============================================================ DATA STATUS BADGE */
+    .data-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-top: 8px;
+    }
+    .data-status.ok   { color: var(--green-light); }
+    .data-status.err  { color: var(--orange-light); }
+    .data-status.load { color: var(--text-muted); }
+
+    /* ============================================================ RIG GRID */
+    .rig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .rig-card {
+      background: var(--bg-card); border: 1px solid var(--border-mid);
+      border-radius: var(--radius-lg); padding: 32px 28px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .rig-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .rig-card:hover { border-color: var(--border-bright); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .rig-card:hover::before { opacity: 1; }
+    .rig-icon {
+      width: 52px; height: 52px; border-radius: var(--radius-md);
+      background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 20px;
+    }
+    .rig-number {
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px;
+    }
+    .rig-title {
+      font-family: var(--font-display); font-weight: 800; font-size: 1.6rem;
+      text-transform: uppercase; letter-spacing: 0.02em; color: var(--text-primary);
+      line-height: 1.1; margin-bottom: 6px;
+    }
+    .rig-subtitle {
+      font-size: 13px; font-weight: 600; color: var(--orange-light);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;
+    }
+    .rig-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+    .rig-specs { display: flex; flex-direction: column; gap: 8px; }
+    .rig-spec { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+    .rig-spec::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+
+    /* ============================================================ SOCIAL GRID */
+    .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .social-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
       padding: 32px 20px; border-radius: var(--radius-lg);
       background: var(--bg-card); border: 1px solid var(--border-mid);
       transition: border-color 0.2s, transform 0.2s, background 0.2s; text-align: center;
