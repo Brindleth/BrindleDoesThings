@@ -1,0 +1,216 @@
+# =============================================================================
+# .github/workflows/sync_stats.yml
+#
+# "THE ROBOT" â€” Brindle Does Things Live Stats Sync
+#
+# What this does every hour:
+#   1. Fetches your live Garmin distance from a Garmin-to-JSON endpoint
+#   2. Fetches your live donation total from the Men's Talk charity API
+#   3. Combines both into data.json at the root of your repo
+#   4. Auto-commits and pushes data.json so your GitHub Pages site sees it
+#
+# HOW TO SET UP YOUR SECRETS (do this once via GitHub website):
+#   1. Go to your repo on github.com
+#   2. Click Settings â†’ Secrets and variables â†’ Actions â†’ New repository secret
+#   3. Add these two secrets:
+#        GARMIN_URL      â†’ Your full Garmin-to-JSON URL
+#        CHARITY_API_URL â†’ Your Men's Talk API endpoint URL
+#
+# OPTIONAL SECRETS (add these if your API needs authentication):
+#        CHARITY_API_KEY â†’ Bearer token or API key for the charity API
+#
+# ABOUT THE data.json FORMAT:
+#   The script will write a file like this:
+#   {
+#     "current_km":   457.3,
+#     "total_raised": 8250,
+#     "current_day":  8,
+#     "location":     "Norseman, WA",
+#     "lat":          -32.195,
+#     "lng":          121.778,
+#     "last_updated": "2025-01-15T08:30:00Z"
+#   }
+#
+#   The index.html loadLiveStats() function reads exactly these field names.
+#   If your Garmin or charity API returns different field names, adjust the
+#   Python extraction lines marked with "â¬… ADJUST" comments below.
+# =============================================================================
+
+name: Sync Live Stats
+
+on:
+  # Run every hour on the hour
+  schedule:
+    - cron: '0 * * * *'
+
+  # Allow you to trigger a manual sync from the Actions tab anytime
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Fetch & Commit data.json
+    runs-on: ubuntu-latest
+
+    # Give the workflow permission to push to your repo
+    permissions:
+      contents: write
+
+    steps:
+
+      # â”€â”€ Step 1: Check out the repository â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # â”€â”€ Step 2: Set up Python â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # â”€â”€ Step 3: Install dependencies â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      - name: Install Python packages
+        run: pip install requests
+
+      # â”€â”€ Step 4: Fetch data and write data.json â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      - name: Build data.json
+        env:
+          GARMIN_URL:      ${{ secrets.GARMIN_URL }}
+          CHARITY_API_URL: ${{ secrets.CHARITY_API_URL }}
+          CHARITY_API_KEY: ${{ secrets.CHARITY_API_KEY }}   # optional â€” leave unset if not needed
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import os, json, requests
+          from datetime import datetime, timezone
+
+          # â”€â”€ Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          TOTAL_KM  = 4000
+          TOTAL_AUD = 100000
+
+          # Read secrets from environment
+          garmin_url      = os.environ.get("GARMIN_URL", "")
+          charity_api_url = os.environ.get("CHARITY_API_URL", "")
+          charity_api_key = os.environ.get("CHARITY_API_KEY", "")
+
+          # â”€â”€ Safe defaults (used if a fetch fails) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          current_km    = 0.0
+          total_raised  = 0.0
+          current_day   = 1
+          location      = "En Route"
+          lat           = None
+          lng           = None
+
+          # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          # GARMIN FETCH
+          # This assumes your Garmin URL returns JSON with distance data.
+          # Common Garmin-to-JSON services (e.g. garmin-to-json, inreach-to-json)
+          # return different shapes â€” check your service's docs and adjust the
+          # field names marked with â¬… ADJUST below.
+          # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          if garmin_url:
+              try:
+                  r = requests.get(garmin_url, timeout=20)
+                  r.raise_for_status()
+                  g = r.json()
+                  print("Garmin raw response keys:", list(g.keys()) if isinstance(g, dict) else type(g))
+
+                  # â¬… ADJUST: extract total distance in km from Garmin response
+                  # Common field names to try â€” uncomment the one that matches your service:
+                  current_km = float(g.get("totalDistance", 0))          # try this first
+                  # current_km = float(g.get("distance_km", 0))
+                  # current_km = float(g.get("total_km", 0))
+                  # current_km = float(g.get("distanceKm", 0))
+                  # If distance is in metres:  current_km = float(g.get("totalDistance", 0)) / 1000
+
+                  # â¬… ADJUST: extract last known latitude/longitude
+                  lat = g.get("latitude")   or g.get("lat")
+                  lng = g.get("longitude")  or g.get("lng")  or g.get("lon")
+
+                  # â¬… ADJUST: extract human-readable location string (if available)
+                  location = g.get("location") or g.get("place") or g.get("description") or "En Route"
+
+                  # Derive current day from distance (57km/day average)
+                  if current_km > 0:
+                      current_day = max(1, round(current_km / (TOTAL_KM / 70)))
+
+                  print(f"âœ… Garmin OK â€” {current_km:.1f} km covered, location: {location}")
+
+              except Exception as e:
+                  print(f"âš ï¸  Garmin fetch failed: {e}")
+          else:
+              print("â„¹ï¸  GARMIN_URL secret not set â€” skipping Garmin fetch")
+
+          # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          # CHARITY / DONATION API FETCH
+          # Adjust field names below to match what your charity API returns.
+          # If the Men's Talk API requires an Authorization header, add your
+          # CHARITY_API_KEY secret in GitHub and it will be used automatically.
+          # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          if charity_api_url:
+              try:
+                  headers = {"Accept": "application/json"}
+                  if charity_api_key:
+                      headers["Authorization"] = f"Bearer {charity_api_key}"
+
+                  r = requests.get(charity_api_url, headers=headers, timeout=20)
+                  r.raise_for_status()
+                  c = r.json()
+                  print("Charity API raw response keys:", list(c.keys()) if isinstance(c, dict) else type(c))
+
+                  # â¬… ADJUST: extract total raised amount (in AUD) from charity response
+                  # Try these common field names â€” uncomment the one that matches:
+                  total_raised = float(c.get("total_raised", 0))          # try this first
+                  # total_raised = float(c.get("amountRaised", 0))
+                  # total_raised = float(c.get("totalDonations", 0))
+                  # total_raised = float(c.get("raised_amount", 0))
+                  # total_raised = float(c.get("amount", 0))
+                  # If amount is in cents: total_raised = float(c.get("amount_cents", 0)) / 100
+
+                  print(f"âœ… Charity API OK â€” ${total_raised:.2f} AUD raised")
+
+              except Exception as e:
+                  print(f"âš ï¸  Charity API fetch failed: {e}")
+          else:
+              print("â„¹ï¸  CHARITY_API_URL secret not set â€” skipping charity fetch")
+
+          # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          # BUILD & WRITE data.json
+          # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          data = {
+              "current_km":   round(current_km, 2),
+              "total_raised": round(total_raised, 2),
+              "current_day":  current_day,
+              "location":     location,
+              "last_updated": datetime.now(timezone.utc).isoformat(),
+          }
+
+          # Only include GPS coords if we got real values
+          if lat is not None:
+              data["lat"] = round(float(lat), 6)
+          if lng is not None:
+              data["lng"] = round(float(lng), 6)
+
+          with open("data.json", "w") as f:
+              json.dump(data, f, indent=2)
+
+          print("\nðŸ“„ data.json written:")
+          print(json.dumps(data, indent=2))
+          PYTHON_SCRIPT
+
+      # â”€â”€ Step 5: Commit and push data.json back to the repo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      - name: Commit data.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage data.json (only this file â€” nothing else)
+          git add data.json
+
+          # Only commit if the file actually changed
+          if git diff --staged --quiet; then
+            echo "â„¹ï¸  data.json unchanged â€” nothing to commit"
+          else
+            TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+            git commit -m "chore: sync live stats [${TIMESTAMP}]"
+            git push
+            echo "âœ… data.json committed and pushed"
+          fi
