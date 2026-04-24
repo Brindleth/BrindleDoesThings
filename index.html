@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brindle Does Things — 4,000km Perth to Sydney</title>
-  <meta name="description" content="An unsupported 4,000km run from Perth to Sydney in 70 days. Launching August 15, 2026. Raising $10,000 AUD for Men's Talk." />
+  <title>Brindle Does Things — 4,000km Perth to Sydney Rover Expedition</title>
+  <meta name="description" content="A 4,000km solar-assisted electric rover expedition from Perth to Sydney. Engineering, endurance and self-reliance — documented from build to finish line. Launching August 15, 2026." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -409,7 +409,276 @@
     .sat-coord { font-family: monospace; font-size: 13px; color: var(--text-muted); }
 
     /* ====================================================================
-       ⑤ THE STORY — About the Runner
+       ⑤ ROVER INTERACTIVE DIAGRAM
+       ------------------------------------------------------------------
+       HOW THIS WORKS:
+         - .rover-diagram holds the main AI-concept rover image.
+         - .rover-hotspot buttons are absolutely positioned using CSS
+           custom properties (--x, --y) set inline via style="".
+         - The .rover-info-card on the right shows a title + component
+           PNG + technical description for the currently selected part.
+         - Hover/focus shows the card temporarily.
+         - Click/tap/Enter/Space locks the card open (data-locked="true").
+         - Escape or the X button closes the locked card.
+       ------------------------------------------------------------------
+       HOW TO MOVE A HOTSPOT:
+         Each hotspot is positioned by its inline style:
+           style="--x: 48%; --y: 62%;"
+         --x is the horizontal position (0% = left edge, 100% = right edge).
+         --y is the vertical position   (0% = top edge,  100% = bottom edge).
+         Tweak these values to line each hotspot up with its real part
+         on final-rover-design.png.
+    ==================================================================== */
+    .rover-disclaimer {
+      display: inline-block;
+      margin: 0 0 28px 0;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(249,115,22,0.08);
+      border: 1px solid rgba(249,115,22,0.22);
+      font-size: 13px;
+      color: var(--orange-light);
+      letter-spacing: 0.02em;
+    }
+
+    .rover-layout {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .rover-diagram {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    .rover-diagram::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      z-index: 3;
+    }
+    .rover-diagram > img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: var(--radius-md);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hotspot button: a glowing orange circle with its number inside. */
+    .rover-hotspot {
+      position: absolute;
+      left: var(--x, 50%);
+      top: var(--y, 50%);
+      transform: translate(-50%, -50%);
+      width: 34px; height: 34px;
+      padding: 0;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: var(--orange);
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow:
+        0 0 0 4px rgba(249,115,22,0.22),
+        0 0 18px rgba(249,115,22,0.6);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rover-hotspot::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(249,115,22,0.35);
+      animation: hotspot-pulse 2.4s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes hotspot-pulse {
+      0%   { transform: scale(0.8); opacity: 0.8; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .rover-hotspot:hover,
+    .rover-hotspot:focus-visible {
+      transform: translate(-50%, -50%) scale(1.18);
+      background: var(--orange-light);
+      box-shadow:
+        0 0 0 6px rgba(249,115,22,0.30),
+        0 0 24px rgba(249,115,22,0.8);
+      outline: none;
+    }
+    .rover-hotspot.is-active {
+      background: var(--green);
+      color: #000;
+      box-shadow:
+        0 0 0 6px rgba(34,197,94,0.28),
+        0 0 24px var(--green-glow);
+    }
+
+    /* Optional tiny label chip shown next to each hotspot on wider screens */
+    .rover-hotspot-label {
+      position: absolute;
+      left: 120%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(2,6,23,0.85);
+      border: 1px solid var(--border-mid);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+    .rover-hotspot:hover .rover-hotspot-label,
+    .rover-hotspot:focus-visible .rover-hotspot-label,
+    .rover-hotspot.is-active .rover-hotspot-label {
+      opacity: 1;
+    }
+
+    /* Info card (right side on desktop, stacked on mobile) */
+    .rover-info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      position: sticky;
+      top: 80px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .rover-info-card[data-locked="true"] {
+      border-color: rgba(249,115,22,0.35);
+      box-shadow: 0 0 0 1px rgba(249,115,22,0.12), 0 24px 60px rgba(0,0,0,0.4);
+    }
+    .rover-info-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .rover-info-kicker {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 6px;
+    }
+    .rover-info-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+      line-height: 1.05;
+    }
+    .rover-info-close {
+      appearance: none;
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      color: var(--text-secondary);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+    .rover-info-close:hover,
+    .rover-info-close:focus-visible {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+      border-color: var(--border-bright);
+      outline: none;
+    }
+    .rover-info-card[data-locked="true"] .rover-info-close {
+      display: inline-flex;
+    }
+
+    .rover-info-image {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-dim);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+    }
+    .rover-info-image img {
+      max-width: 100%;
+      max-height: 180px;
+      height: auto;
+      object-fit: contain;
+    }
+    .rover-info-image.is-empty {
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .rover-info-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .rover-info-hint {
+      margin-top: auto;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-top: 10px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    /* Responsive: stack card below diagram on narrower screens */
+    @media (max-width: 960px) {
+      .rover-layout { grid-template-columns: 1fr; gap: 24px; }
+      .rover-info-card { position: static; min-height: 0; }
+      .rover-hotspot { width: 30px; height: 30px; font-size: 13px; }
+    }
+    @media (max-width: 640px) {
+      .rover-hotspot { width: 28px; height: 28px; font-size: 12px; }
+      .rover-diagram { padding: 14px; }
+    }
+
+    /* ====================================================================
+       ⑥ THE STORY — About the Rider
     ==================================================================== */
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
     .about-portrait {
@@ -463,93 +732,85 @@
     .cred-chip .ci { color: var(--orange); }
 
     /* ====================================================================
-       ⑥ SUPPORT — THE TWO POTS
+       ⑦ SUPPORT — TWO OPTIONS (Build + Journey)
     ==================================================================== */
     .support-section {
       position: relative; z-index: 1; background: var(--bg-layer);
       border-top: 1px solid var(--border-dim); border-bottom: 1px solid var(--border-dim);
       padding: 96px 0;
     }
-    /* Pot A — Charity */
-    .charity-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; }
-    .charity-card {
-      background: var(--bg-card); border-radius: var(--radius-lg);
-      border: 1px solid rgba(34,197,94,0.22); padding: 40px;
-      position: relative; overflow: hidden;
-    }
-    .charity-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--green), var(--green-light), var(--green));
-    }
-    .charity-badge {
-      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
-      background: var(--green-dim); border: 1px solid rgba(34,197,94,0.25);
-      font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green-light); margin-bottom: 16px;
-    }
-    .charity-title { font-family: var(--font-display); font-weight: 900; font-size: 2.4rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--text-primary); line-height: 1; margin-bottom: 4px; }
-    .charity-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
-    .fund-amount { font-family: var(--font-display); font-weight: 900; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 14px; }
-    .fund-track { height: 16px; background: var(--bg-surface); border-radius: 999px; overflow: hidden; border: 1px solid var(--border-dim); margin-bottom: 8px; }
-    .fund-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--green), var(--green-light)); box-shadow: 0 0 16px var(--green-glow); transition: width 1.4s cubic-bezier(0.16,1,0.3,1); }
-    .fund-footnote { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
-    .charity-about { background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid var(--border-dim); padding: 28px; }
-    .charity-about-title { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 10px; }
-    .charity-about p { font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 12px; }
-    .charity-about p:last-child { margin-bottom: 0; }
 
-    /* Pot separator */
-    .pot-separator { display: flex; align-items: center; gap: 16px; margin: 60px 0; }
-    .pot-separator hr { flex: 1; border: none; border-top: 1px solid var(--border-mid); }
-    .pot-separator span {
+    .support-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: stretch;
+    }
+    .support-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-mid);
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .support-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .support-card.build::before  { background: linear-gradient(90deg, var(--orange), #fbbf24, var(--orange)); }
+    .support-card.follow::before { background: linear-gradient(90deg, var(--green), var(--green-light), var(--green)); }
+    .support-card.build  { border-color: rgba(249,115,22,0.25); }
+    .support-card.follow { border-color: rgba(34,197,94,0.25); }
+
+    .support-badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
       font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted);
-      white-space: nowrap; padding: 6px 16px; border-radius: 999px;
-      background: var(--bg-surface); border: 1px solid var(--border-dim);
+      letter-spacing: 0.14em; text-transform: uppercase;
+      align-self: flex-start;
     }
+    .support-card.build .support-badge {
+      background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.25); color: var(--orange-light);
+    }
+    .support-card.follow .support-badge {
+      background: var(--green-dim); border: 1px solid rgba(34,197,94,0.25); color: var(--green-light);
+    }
+    .support-title {
+      font-family: var(--font-display); font-weight: 900;
+      font-size: 2rem; text-transform: uppercase; letter-spacing: 0.02em;
+      color: var(--text-primary); line-height: 1;
+    }
+    .support-sub { font-size: 15px; color: var(--text-secondary); line-height: 1.65; }
+    .support-list {
+      list-style: none; display: flex; flex-direction: column; gap: 10px;
+      margin-top: 4px;
+    }
+    .support-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-dim);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .support-list .bi-icon { font-size: 18px; flex-shrink: 0; line-height: 1; margin-top: 2px; color: var(--orange); }
+    .support-card.follow .support-list .bi-icon { color: var(--green-light); }
+    .support-list .bi-title { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 2px; }
+    .support-list .bi-desc  { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
-    /* Pot B — Buy Me a Coffee */
-    .bmac-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; }
-    .bmac-card {
-      background: var(--bg-card); border-radius: var(--radius-lg);
-      border: 1px solid rgba(249,115,22,0.20); padding: 40px;
-      text-align: center; position: relative; overflow: hidden;
-    }
-    .bmac-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--orange), #fbbf24, var(--orange));
-    }
-    .bmac-coffee-icon { font-size: 52px; line-height: 1; margin-bottom: 14px; }
-    .bmac-badge {
-      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
-      background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.22);
-      font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange-light); margin-bottom: 14px;
-    }
-    .bmac-title { font-family: var(--font-display); font-weight: 900; font-size: 2rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-primary); margin-bottom: 8px; }
-    .bmac-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 28px; line-height: 1.6; }
+    .support-cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 8px; }
+
     .bmac-btn {
-      display: inline-flex; align-items: center; gap: 10px; padding: 15px 32px; border-radius: var(--radius-md);
-      background: #FFDD00; color: #000; font-family: var(--font-display); font-weight: 800; font-size: 17px;
+      display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: var(--radius-md);
+      background: #FFDD00; color: #000; font-family: var(--font-display); font-weight: 800; font-size: 15px;
       letter-spacing: 0.04em; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none;
       transition: transform 0.18s ease, box-shadow 0.18s ease; box-shadow: 0 4px 20px rgba(255,221,0,0.3);
     }
     .bmac-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,221,0,0.45); color: #000; }
-    .bmac-disclaimer {
-      margin-top: 20px; padding: 14px 18px; border-radius: var(--radius-md);
-      background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.18);
-      font-size: 12px; color: var(--text-secondary); line-height: 1.6; text-align: left;
-    }
-    .bmac-disclaimer strong { color: var(--orange-light); font-weight: 700; }
-    .bmac-list-title { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 16px; }
-    .bmac-list { display: flex; flex-direction: column; gap: 10px; list-style: none; }
-    .bmac-list li {
-      display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px;
-      background: var(--bg-card); border: 1px solid var(--border-mid); border-radius: var(--radius-md);
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .bmac-list li:hover { border-color: var(--border-bright); background: var(--bg-card-hover); }
-    .bi-icon { font-size: 20px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
-    .bi-title { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 2px; }
-    .bi-desc  { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
     /* ====================================================================
        SOCIAL
@@ -584,7 +845,6 @@
     .footer-brand { font-family: var(--font-display); font-weight: 800; font-size: 18px; letter-spacing: 0.06em; text-transform: uppercase; }
     .footer-brand span { color: var(--orange); }
     .footer-cause { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
-    .footer-cause a { color: var(--green-light); font-weight: 600; }
 
     /* ====================================================================
        RESPONSIVE
@@ -592,8 +852,7 @@
     @media (max-width: 960px) {
       .about-grid    { grid-template-columns: 1fr; gap: 40px; }
       .about-portrait { max-width: 480px; margin: 0 auto; width: 100%; aspect-ratio: 16/9; }
-      .charity-grid  { grid-template-columns: 1fr; }
-      .bmac-grid     { grid-template-columns: 1fr; }
+      .support-grid  { grid-template-columns: 1fr; }
       .stat-strip-inner { grid-template-columns: repeat(2,1fr); }
       .stat-block:nth-child(2) { border-right: none; }
       .stat-block:nth-child(3) { border-top: 1px solid var(--border-dim); border-right: 1px solid var(--border-dim); }
@@ -614,7 +873,7 @@
       .route-wrap { padding: 24px 18px; }
       .social-grid { grid-template-columns: 1fr; }
       .social-btn { flex-direction: row; text-align: left; padding: 18px 20px; gap: 16px; }
-      .charity-card, .bmac-card { padding: 28px 20px; }
+      .support-card { padding: 24px 20px; }
       .stat-block { padding: 18px 16px; }
     }
   </style>
@@ -629,12 +888,13 @@
         <a href="#video">The Hook</a>
         <a href="#tracker">Tracker</a>
         <a href="#map">Map</a>
+        <a href="#rover">Rover</a>
         <a href="#story">The Story</a>
         <a href="#support">Support</a>
         <a href="#social">Follow</a>
       </div>
-      <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-      <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer" style="padding: 10px 18px; font-size: 13px; flex-shrink: 0;">💚 Donate</a>
+      <!-- ↓ REPLACE href="https://buymeacoffee.com/matthewbriv" IF THE SUPPORT LINK EVER CHANGES -->
+      <a class="btn btn-orange" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer" style="padding: 10px 18px; font-size: 13px; flex-shrink: 0;">☕ Support</a>
     </div>
   </nav>
 
@@ -646,7 +906,7 @@
     <div class="wrap">
 
       <div class="hero-eyebrow">
-        <div class="tag-pill">⚡ World Endurance Run · Aug 15, 2026</div>
+        <div class="tag-pill">⚡ Solar-Assisted Rover Expedition · Aug 15, 2026</div>
         <!--
           Live location pill — pre-launch shows the launch date text.
           Post-launch, loadLiveStats() updates this via data.json.
@@ -657,22 +917,21 @@
         </div>
       </div>
 
-      <h1 class="hero-headline">4,000km<br /><em>on foot.</em></h1>
+      <h1 class="hero-headline">4,000km<br /><em>by rover.</em></h1>
 
       <p class="hero-sub">
-        Perth &rarr; Sydney &nbsp;&middot;&nbsp; <span>70 Days</span> &nbsp;&middot;&nbsp; Unsupported
+        Perth &rarr; Sydney &nbsp;&middot;&nbsp; <span>Solar-Assisted</span> &nbsp;&middot;&nbsp; Self-Built
       </p>
 
       <div class="hero-meta">
-        <div class="meta-chip">🏃 ~57km per day</div>
-        <div class="meta-chip">🪖 45kg custom buggy</div>
-        <div class="meta-chip">☀️ 200W solar-powered</div>
-        <div class="meta-chip">💚 $10,000 for Men's Talk</div>
+        <div class="meta-chip">🤖 Support rover build</div>
+        <div class="meta-chip">☀️ Solar-assisted electric</div>
+        <div class="meta-chip">🔋 48V LiFePO4 power</div>
+        <div class="meta-chip">🛠 Engineered &amp; documented</div>
       </div>
 
       <div class="hero-cta-row">
-        <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-        <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer">💚 Donate to Men's Talk</a>
+        <a class="btn btn-orange" href="#support" >☕ Support the Build</a>
         <!-- Smooth-scrolls to the story section -->
         <a class="btn btn-ghost" href="#story">Learn More ↓</a>
         <a class="btn btn-ghost" href="#tracker">📍 Track Live</a>
@@ -694,12 +953,12 @@
           <div class="stat-label">Mission Duration</div>
         </div>
         <div class="stat-block">
-          <div class="stat-value">$10k<span class="stat-unit">aud</span></div>
-          <div class="stat-label">Charity Goal</div>
+          <div class="stat-value">48<span class="stat-unit">V</span></div>
+          <div class="stat-label">LiFePO4 System</div>
         </div>
         <div class="stat-block">
-          <div class="stat-value">45<span class="stat-unit">kg</span></div>
-          <div class="stat-label">Buggy Weight</div>
+          <div class="stat-value">8<span class="stat-unit">systems</span></div>
+          <div class="stat-label">Integrated Build</div>
         </div>
       </div>
     </div>
@@ -724,7 +983,7 @@
       <div class="section-header" style="text-align:center; max-width:700px; margin:0 auto 40px;">
         <div class="section-kicker">The Mission</div>
         <h2 class="section-title">Watch the Announcement</h2>
-        <p class="section-desc" style="margin:0 auto;">4,000km. 70 days. One man, one buggy, zero support crew. Here's why.</p>
+        <p class="section-desc" style="margin:0 auto;">4,000km. 70 days. A hand-built solar-assisted rover carrying everything needed to cross the continent. Here's why.</p>
       </div>
 
       <div class="video-wrap">
@@ -789,21 +1048,12 @@
               <div class="cd-label">Mins</div>
             </div>
           </div>
-          <div class="countdown-cta">
-            <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-            <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer">💚 Donate Before Launch</a>
-            <a class="btn btn-ghost" href="#video">Watch the Announcement</a>
-          </div>
         </div>
       </div>
 
-      <!-- State B: Live stats — shown post-launch by JS -->
+      <!-- State B: Live route tracker — shown post-launch by JS -->
       <div id="state-live">
-        <p class="section-desc" style="margin-bottom: 8px;">
-          Stats update automatically every hour via Garmin satellite.
-          <br><span class="data-status load" id="data-status">⏳ Loading live data&hellip;</span>
-        </p>
-        <div class="route-wrap" style="margin-top: 32px;">
+        <div class="route-wrap">
           <div class="route-cities">
             <div class="route-city">
               <div class="city-label">Start &middot; Day 1 &middot; Scarborough Beach</div>
@@ -817,7 +1067,7 @@
           </div>
           <div class="route-track">
             <div class="route-fill" id="route-fill">
-              <div class="route-runner">🏃</div>
+              <div class="route-runner">🤖</div>
             </div>
           </div>
           <div class="route-milestones">
@@ -841,6 +1091,7 @@
               <div class="rs-value" id="stat-remaining">— <span style="font-size:1rem;">km</span></div>
             </div>
           </div>
+          <div id="data-status" class="data-status"></div>
         </div>
       </div>
 
@@ -865,7 +1116,7 @@
       <div class="section-header">
         <div class="section-kicker">Live Tracking</div>
         <h2 class="section-title">Satellite Map</h2>
-        <p class="section-desc">Garmin inReach live tracking activates at 6am August 15, 2026. Every step trackable in real time.</p>
+        <p class="section-desc">Garmin inReach live tracking activates at 6am August 15, 2026. Every kilometre trackable in real time.</p>
       </div>
 
       <div class="sat-wrap">
@@ -910,7 +1161,7 @@
             Satellite Tracking Live
             <span class="sat-date">15 August 2026</span>
           </div>
-          <p class="sat-sub">The Garmin inReach MapShare feed activates the moment the run begins at Scarborough Beach. Check back on launch day to track every step in real time.</p>
+          <p class="sat-sub">The Garmin inReach MapShare feed activates the moment the expedition begins at Scarborough Beach. Check back on launch day to track the rover in real time.</p>
           <a class="btn btn-ghost" href="#tracker">⏱ See the Countdown</a>
         </div>
 
@@ -931,7 +1182,195 @@
 
 
   <!-- ================================================================
-       ⑤ THE STORY — About the Runner
+       ⑤ THE ROVER BUILD — Interactive Breakdown
+
+       HOW TO UPDATE THE MAIN CONCEPT IMAGE:
+         - Drop your latest concept render in at the repo root as
+           `final-rover-design.png` (or change the <img src> below).
+
+       HOW TO UPDATE THE 8 COMPONENT IMAGES:
+         - Place the 8 transparent PNGs at the repo root:
+             rover-chassis.png
+             rover-rear-drive.png
+             rover-front-steering.png
+             rover-battery.png
+             rover-solar.png
+             rover-water.png
+             rover-control-electronics.png
+             rover-cargo-filming.png
+         - They are referenced by each hotspot's data-img attribute below.
+
+       HOW TO MOVE A HOTSPOT:
+         - Each .rover-hotspot has an inline style like:
+             style="--x: 48%; --y: 62%;"
+         - Adjust --x (horizontal, 0%–100%) and --y (vertical, 0%–100%)
+           to line each numbered button up with its part on the concept
+           image. The image is the positioning reference.
+
+       HOW TO EDIT A ROVER SECTION (title / text):
+         - Each hotspot uses:
+             data-title  — the bold name shown in the info card
+             data-desc   — the technical description shown in the card
+             data-img    — the component PNG shown in the card
+         - Update any of these attributes and the info card updates
+           automatically; no other changes needed.
+  ================================================================ -->
+  <section class="section" id="rover">
+    <div class="wrap">
+      <div class="section-header">
+        <div class="section-kicker">The Rover Build</div>
+        <h2 class="section-title">Solar-Assisted<br />Expedition Rover</h2>
+        <p class="section-desc">A purpose-built electric support rover designed to carry water, power, filming gear and essentials across the Perth-to-Sydney route. Hover, tap or keyboard-focus any numbered hotspot to explore the system it belongs to.</p>
+      </div>
+
+      <p class="rover-disclaimer">
+        ⚠ Concept image generated with AI. This is not the final engineered design and is for visualisation only.
+      </p>
+
+      <div class="rover-layout">
+
+        <!-- ────────────────────────────────────────────────────────
+             MAIN DIAGRAM + HOTSPOTS
+             Replace final-rover-design.png with your latest render.
+             Each numbered button below corresponds to one part of the
+             8-part rover breakdown.
+        ──────────────────────────────────────────────────────── -->
+        <div class="rover-diagram" id="rover-diagram">
+          <img src="final-rover-design.png" alt="AI-generated concept image of the fully built solar-assisted expedition rover showing chassis, wheels, solar panels, battery, electronics and cargo boxes.">
+
+          <!-- 1. CHASSIS — centred beneath the frame -->
+          <button
+            class="rover-hotspot"
+            style="--x: 48%; --y: 72%;"
+            data-part="chassis"
+            data-title="Steel Ladder Chassis"
+            data-img="rover-chassis.png"
+            data-desc="Low rectangular mild-steel RHS ladder frame. Planned around 50x50x3mm main rails and 40x40x3mm crossmembers, keeping battery, water and electronics low for stability and repairability."
+            aria-label="Part 1: Steel Ladder Chassis">
+            1<span class="rover-hotspot-label">Chassis</span>
+          </button>
+
+          <!-- 2. REAR HUB MOTOR DRIVE — back axle, right side of image -->
+          <button
+            class="rover-hotspot"
+            style="--x: 80%; --y: 48%;"
+            data-part="rear-drive"
+            data-title="Rear Hub Motor Drive"
+            data-img="rover-rear-drive.png"
+            data-desc="Two rear 48V hub motors provide propulsion. Rear drive improves traction when the rover is loaded, with motor controllers protected inside the electronics bay."
+            aria-label="Part 2: Rear Hub Motor Drive">
+            2<span class="rover-hotspot-label">Drive</span>
+          </button>
+
+          <!-- 3. FRONT STEERING — front axle, left side of image -->
+          <button
+            class="rover-hotspot"
+            style="--x: 22%; --y: 52%;"
+            data-part="steering"
+            data-title="Front Steering System"
+            data-img="rover-front-steering.png"
+            data-desc="Fixed front crossmember with kingpin knuckles, one tie rod, and a central bellcrank driven by a linear actuator. Designed for simple, serviceable steering."
+            aria-label="Part 3: Front Steering System">
+            3<span class="rover-hotspot-label">Steering</span>
+          </button>
+
+          <!-- 4. BATTERY — the silver battery pack on the chassis centre -->
+          <button
+            class="rover-hotspot"
+            style="--x: 42%; --y: 60%;"
+            data-part="battery"
+            data-title="48V LiFePO4 Battery"
+            data-img="rover-battery.png"
+            data-desc="Main energy storage for propulsion and onboard electronics. Planned around a 48V LiFePO4 pack, mounted low and central to reduce rollover risk."
+            aria-label="Part 4: 48V LiFePO4 Battery">
+            4<span class="rover-hotspot-label">Battery</span>
+          </button>
+
+          <!-- 5. SOLAR PANELS — up on the roof panel array -->
+          <button
+            class="rover-hotspot"
+            style="--x: 64%; --y: 20%;"
+            data-part="solar"
+            data-title="Solar Charging System"
+            data-img="rover-solar.png"
+            data-desc="Solar-assisted charging using mounted or foldable panels. Solar helps extend daily range but is not treated as the only energy source."
+            aria-label="Part 5: Solar Charging System">
+            5<span class="rover-hotspot-label">Solar</span>
+          </button>
+
+          <!-- 6. WATER STORAGE — the standalone white tank bottom-left -->
+          <button
+            class="rover-hotspot"
+            style="--x: 26%; --y: 86%;"
+            data-part="water"
+            data-title="Water Storage"
+            data-img="rover-water.png"
+            data-desc="Low-mounted water storage with water-level sensors. Designed for remote sections where water weight, stability and monitoring are critical."
+            aria-label="Part 6: Water Storage">
+            6<span class="rover-hotspot-label">Water</span>
+          </button>
+
+          <!-- 7. CONTROL ELECTRONICS — the black/green PCB bay on chassis -->
+          <button
+            class="rover-hotspot"
+            style="--x: 52%; --y: 52%;"
+            data-part="control"
+            data-title="Control Electronics"
+            data-img="rover-control-electronics.png"
+            data-desc="Raspberry Pi 5 for interface, logging and high-level control, with an ESP32 or microcontroller for real-time steering and motor control. Includes fused power distribution, DC-DC converters and emergency stop hardware."
+            aria-label="Part 7: Control Electronics">
+            7<span class="rover-hotspot-label">Control</span>
+          </button>
+
+          <!-- 8. CARGO & FILMING GEAR — the open case bottom-right -->
+          <button
+            class="rover-hotspot"
+            style="--x: 80%; --y: 86%;"
+            data-part="gear"
+            data-title="Cargo &amp; Filming Gear"
+            data-img="rover-cargo-filming.png"
+            data-desc="Storage for tools, repair parts, food, clothing, drone batteries, GoPro batteries, phone power banks and filming equipment for the YouTube journey."
+            aria-label="Part 8: Cargo and Filming Gear">
+            8<span class="rover-hotspot-label">Gear</span>
+          </button>
+        </div>
+
+        <!-- ────────────────────────────────────────────────────────
+             INFO CARD
+             Populated dynamically by the rover-diagram JS block.
+             The "X" close button only appears when the card is locked.
+        ──────────────────────────────────────────────────────── -->
+        <aside class="rover-info-card" id="rover-info" data-locked="false" aria-live="polite">
+          <div class="rover-info-head">
+            <div>
+              <div class="rover-info-kicker" id="rover-info-kicker">Interactive Breakdown</div>
+              <div class="rover-info-title" id="rover-info-title">Hover a hotspot</div>
+            </div>
+            <button type="button" class="rover-info-close" id="rover-info-close" aria-label="Close rover part info">×</button>
+          </div>
+
+          <div class="rover-info-image is-empty" id="rover-info-image">
+            Select any numbered hotspot
+          </div>
+
+          <p class="rover-info-desc" id="rover-info-desc">
+            This rover is the 4,000km support platform for the Perth-to-Sydney expedition. Hover, tap or keyboard-focus any numbered hotspot on the image to explore a system. Click or press Enter to pin the card open. Press Escape or the X to close.
+          </p>
+
+          <div class="rover-info-hint" id="rover-info-hint">
+            Hover · Tap · Enter locks · Esc closes
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+
+  <!-- ================================================================
+       ⑥ THE STORY — About the Rider
   ================================================================ -->
   <section class="section" id="story">
     <div class="wrap">
@@ -947,7 +1386,7 @@
                    style="width:100%;height:100%;object-fit:cover;" />
             -->
             <div class="portrait-placeholder">
-              <div class="portrait-icon">🏃</div>
+              <div class="portrait-icon">🛠</div>
               <p>Add your photo here<br />(replace with &lt;img&gt;)</p>
             </div>
             <div class="about-origin-tag">🇬🇧 England &rarr; 🇦🇺 Australia</div>
@@ -957,25 +1396,25 @@
         <!-- Right: story -->
         <div>
           <div class="section-header" style="margin-bottom: 32px;">
-            <div class="section-kicker">The Man Behind the Mission</div>
-            <h2 class="section-title">From England<br />to the Outback:<br />Why I'm Running.</h2>
+            <div class="section-kicker">The Person Behind the Build</div>
+            <h2 class="section-title">From England<br />to the Outback:<br />Why I'm Building.</h2>
           </div>
 
           <div class="about-story">
             <p>
-              <strong>I am a UK-trained and qualified Electrical &amp; Electronic Engineer</strong> who moved to Australia to escape a cycle of addiction that nearly cost me my life.
+              <strong>I am a UK-trained and qualified Electrical &amp; Electronic Engineer</strong> who moved to Australia to rebuild — physically, mentally and technically — after coming through recovery from addiction.
             </p>
             <p>
-              After arriving, I faced immediate hardship — living in my car for three months while working Uber Eats just to survive. No safety net. No support crew. Sound familiar?
+              After arriving, I faced immediate hardship: living in my car for three months while working delivery jobs just to survive. No safety net. No support crew. That stretch taught me exactly how much you can engineer your way out of, if you're willing to keep showing up.
             </p>
             <div class="about-pull-quote">
-              <p>"Having lost close friends and family to addiction and suicide, I realised I wanted to use my struggle to show other men that you can always keep pushing forward — no matter how dark it gets."</p>
+              <p>"This project is recovery, endurance and engineering welded into one 4,000km object. If I can build it, I can drive it. If I can drive it, I can finish it — and every step is filmed."</p>
             </div>
             <p>
-              This run isn't about endurance records. It's about proof. <strong>Proof that the darkest chapter of your life doesn't have to be the last one.</strong> Every kilometre I push that buggy across the outback is a kilometre I didn't give up.
+              This expedition isn't about a distance record. It's about <strong>building something real with my own hands</strong>, then pointing it at the horizon and seeing if it makes it. Every weld, every wiring loom, every kilometre logged is documented — from workshop to finish line.
             </p>
             <p>
-              Men's Talk exists to create the rooms where those conversations happen safely. Follow along. Tell someone. And if you can, donate.
+              Follow the build. Follow the drive. If the work resonates, support the next stage or share the channel so the story reaches whoever needs it.
             </p>
           </div>
 
@@ -983,13 +1422,12 @@
             <div class="cred-chip"><span class="ci">⚡</span> Electrical &amp; Electronic Engineer</div>
             <div class="cred-chip"><span class="ci">🇬🇧</span> UK Qualified</div>
             <div class="cred-chip"><span class="ci">🇦🇺</span> Based in Australia</div>
-            <div class="cred-chip"><span class="ci">💚</span> Recovery Advocate</div>
+            <div class="cred-chip"><span class="ci">🛠</span> Self-Reliant Builder</div>
           </div>
 
           <div style="margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;">
-            <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-            <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer">💚 Back the Mission</a>
-            <a class="btn btn-ghost" href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer">Men's Talk ↗</a>
+            <a class="btn btn-orange" href="#support">☕ Support the Build</a>
+            <a class="btn btn-ghost" href="#rover">See the Rover ↓</a>
           </div>
         </div>
 
@@ -1001,133 +1439,114 @@
 
 
   <!-- ================================================================
-       ⑥ SUPPORT — TWO POTS
-       Clearly separated: charity vs personal mission fund.
+       ⑦ SUPPORT — Two clear options:
+         A) Support the Build — funds rover parts, batteries, solar,
+                                 fabrication, sensors, safety gear
+         B) Follow the Journey — YouTube / TikTok / Instagram /
+                                 documentary updates
+       Buy Me a Coffee remains the personal mission/build link.
   ================================================================ -->
   <div class="support-section" id="support">
     <div class="wrap">
 
-      <div class="section-header" style="text-align:center; max-width:680px; margin:0 auto 56px;">
-        <div class="section-kicker">Support the Mission</div>
+      <div class="section-header" style="text-align:center; max-width:720px; margin:0 auto 56px;">
+        <div class="section-kicker">Back the Mission</div>
         <h2 class="section-title">Two Ways<br />to Help</h2>
-        <p class="section-desc" style="margin:0 auto;">There are two completely separate funds. Please read both so you know exactly where your support goes.</p>
+        <p class="section-desc" style="margin:0 auto;">You can fund the parts that make the rover real, or you can follow the build and drive as it's documented across YouTube, TikTok, Instagram and the long-form documentary.</p>
       </div>
 
-      <!-- ═════ POT A: CHARITY ═════ -->
-      <div class="charity-grid">
+      <div class="support-grid">
 
-        <div>
-          <div class="charity-card">
-            <div class="charity-badge">💚 Official Charity Fundraiser</div>
-            <div class="charity-title">Men's Talk</div>
-            <div class="charity-subtitle">100% of donations go directly to the charity. Not to Matthew.</div>
-
-            <!-- Updated post-launch by loadLiveStats() via data.json -->
-            <div class="fund-amount" id="stat-raised">
-              $0 <span style="font-size:1rem;color:var(--text-muted);font-weight:600;">/ $10,000 AUD</span>
-            </div>
-            <div class="fund-track">
-              <div class="fund-fill" id="fund-fill"></div>
-            </div>
-            <div class="fund-footnote">Progress updates live once the mission launches on August 15, 2026.</div>
-
-            <!-- ↓ REPLACE href="#" WITH YOUR MEN'S TALK DONATION URL -->
-            <a class="btn btn-green" href="#" target="_blank" rel="noopener noreferrer" style="width:100%;justify-content:center;">
-              💚 Donate to Men's Talk
-            </a>
+        <!-- ═════ A: SUPPORT THE BUILD ═════ -->
+        <div class="support-card build">
+          <div class="support-badge">☕ Build Fund</div>
+          <div class="support-title">Support the Build</div>
+          <div class="support-sub">
+            Every contribution funds hardware for the rover — the physical things that turn a sketch into a vehicle that can actually cross the country.
           </div>
-        </div>
 
-        <div>
-          <div class="section-header" style="margin-bottom: 24px;">
-            <div class="section-kicker">Pot A — The Charity</div>
-            <h3 class="section-title" style="font-size: clamp(2rem,4vw,3rem);">Who Gets<br />This Money?</h3>
-          </div>
-          <div class="charity-about">
-            <div class="charity-about-title">Men's Talk — Men's Mental Health Australia</div>
-            <p>Men's Talk provides real, accessible mental health support for men across Australia — counselling, peer programs, and conversations that save lives.</p>
-            <p>75% of suicides in Australia are men. Men are far less likely to seek help. This fundraiser turns Matthew's lived experience into direct action.</p>
-            <p><strong style="color:var(--text-primary);">Your donation goes 100% to the charity.</strong> Not one cent of this fund covers the buggy, shoes, or food.</p>
-          </div>
-          <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
-            <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-            <a class="btn btn-green" href="#" target="_blank" rel="noopener noreferrer">💚 Donate Now</a>
-            <a class="btn btn-ghost" href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer">Visit Men's Talk ↗</a>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ── Visual separator with clear label ── -->
-      <div class="pot-separator">
-        <hr />
-        <span>⚠️ Separate Fund Below — Personal Mission Support</span>
-        <hr />
-      </div>
-
-      <!-- ═════ POT B: BUY ME A COFFEE ═════ -->
-      <div class="bmac-grid">
-
-        <div>
-          <div class="bmac-card">
-            <div class="bmac-coffee-icon">☕</div>
-            <div class="bmac-badge">⚙️ Personal Mission Fund</div>
-            <div class="bmac-title">Buy Matthew a Coffee</div>
-            <div class="bmac-sub">Direct fuel for the runner — the gear and logistics that make 4,000km physically possible.</div>
-
-            <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer">
-              ☕ Buy Me a Coffee
-            </a>
-
-            <div class="bmac-disclaimer">
-              <strong>⚠️ Please Note:</strong> Contributions via "Buy Me a Coffee" go directly to Matthew to fund the physical requirements of this unsupported mission. These funds are <strong>entirely separate</strong> from the $10,000 Men's Talk charity goal — every cent of which goes to the charity.
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div class="section-header" style="margin-bottom: 24px;">
-            <div class="section-kicker">Pot B — The Mission Fund</div>
-            <h3 class="section-title" style="font-size: clamp(2rem,4vw,3rem);">What Does<br />This Cover?</h3>
-          </div>
-          <div class="bmac-list-title">Every dollar here funds the mission itself</div>
-          <ul class="bmac-list">
+          <ul class="support-list">
             <li>
-              <span class="bi-icon">🦯</span>
+              <span class="bi-icon">🔋</span>
               <div>
-                <div class="bi-title">Custom Endurance Buggy &amp; DIY Modifications</div>
-                <div class="bi-desc">Hand-built to carry 45kg across every road surface between Perth and Sydney.</div>
-              </div>
-            </li>
-            <li>
-              <span class="bi-icon">📡</span>
-              <div>
-                <div class="bi-title">Garmin inReach Satellite Subscription</div>
-                <div class="bi-desc">Monthly satellite comms — live tracking and emergency SOS, always on.</div>
-              </div>
-            </li>
-            <li>
-              <span class="bi-icon">🍫</span>
-              <div>
-                <div class="bi-title">High-Calorie Expedition Food, Water &amp; Gels</div>
-                <div class="bi-desc">Burning thousands of calories unsupported — the food bill is real and relentless.</div>
-              </div>
-            </li>
-            <li>
-              <span class="bi-icon">👟</span>
-              <div>
-                <div class="bi-title">Specialised Running Shoes (Multiple Pairs)</div>
-                <div class="bi-desc">4,000km destroys shoes. Multiple pairs needed to make it to Bondi Beach.</div>
+                <div class="bi-title">Batteries &amp; Power System</div>
+                <div class="bi-desc">48V LiFePO4 pack, BMS, fuses, bus bars and DC-DC conversion.</div>
               </div>
             </li>
             <li>
               <span class="bi-icon">☀️</span>
               <div>
-                <div class="bi-title">Solar Power Hardware &amp; Life-Support Gear</div>
-                <div class="bi-desc">200W solar blanket, power banks, and field repair kit keeping everything alive in the outback.</div>
+                <div class="bi-title">Solar Charging Hardware</div>
+                <div class="bi-desc">Panels, MPPT charge controller, cabling and mounting.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">🛠</span>
+              <div>
+                <div class="bi-title">Fabrication &amp; Chassis Parts</div>
+                <div class="bi-desc">Steel RHS, welding consumables, hardware and machining.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">📟</span>
+              <div>
+                <div class="bi-title">Sensors, Control &amp; Safety</div>
+                <div class="bi-desc">Raspberry Pi, microcontrollers, GPS, water-level sensors, E-stop.</div>
               </div>
             </li>
           </ul>
+
+          <div class="support-cta-row">
+            <!-- Buy Me a Coffee = personal mission / build support link -->
+            <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer">
+              ☕ Buy Me a Coffee
+            </a>
+          </div>
+        </div>
+
+        <!-- ═════ B: FOLLOW THE JOURNEY ═════ -->
+        <div class="support-card follow">
+          <div class="support-badge">📡 Follow the Journey</div>
+          <div class="support-title">Follow the Journey</div>
+          <div class="support-sub">
+            Support costs nothing — just watching, subscribing and sharing pushes the build and the expedition further. Every platform has a different angle.
+          </div>
+
+          <ul class="support-list">
+            <li>
+              <span class="bi-icon">▶</span>
+              <div>
+                <div class="bi-title">YouTube — Long-form Build &amp; Documentary</div>
+                <div class="bi-desc">Full episodes covering design, fabrication and the drive itself.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">🎬</span>
+              <div>
+                <div class="bi-title">TikTok — Daily Short Cuts</div>
+                <div class="bi-desc">Daily clips from the workshop, testing and the road.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">📸</span>
+              <div>
+                <div class="bi-title">Instagram — Photos, Reels &amp; Stories</div>
+                <div class="bi-desc">Stills, reels and behind-the-scenes updates from the build.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">🎞</span>
+              <div>
+                <div class="bi-title">Full Documentary</div>
+                <div class="bi-desc">The complete story from first weld to Bondi Beach, edited end-to-end.</div>
+              </div>
+            </li>
+          </ul>
+
+          <div class="support-cta-row">
+            <a class="btn btn-green" href="https://youtube.com/@brindledoesthings?si=iw9XXewANBb9wuAi" target="_blank" rel="noopener noreferrer">▶ YouTube</a>
+            <a class="btn btn-ghost" href="#social">All Platforms ↓</a>
+          </div>
         </div>
 
       </div>
@@ -1146,7 +1565,7 @@
       <div class="section-header">
         <div class="section-kicker">Follow the Journey</div>
         <h2 class="section-title">Stay Connected</h2>
-        <p class="section-desc">Daily updates, drone footage, and the full documentary — follow along on all platforms.</p>
+        <p class="section-desc">Build updates, test footage, drone shots and the full documentary — follow along on every platform.</p>
       </div>
       <div class="social-grid">
         <a class="social-btn" href="https://youtube.com/@brindledoesthings?si=iw9XXewANBb9wuAi" target="_blank" rel="noopener noreferrer">
@@ -1154,21 +1573,21 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8ZM9.7 15.7V8.3l6.5 3.7-6.5 3.7Z"/></svg>
           </div>
           <div class="social-name">YouTube</div>
-          <div class="social-handle">Full expedition vlogs &amp; documentary</div>
+          <div class="social-handle">Full build vlogs &amp; documentary</div>
         </a>
         <a class="social-btn" href="https://www.tiktok.com/@brindledoesthings?_r=1&_t=ZS-95JTexu56Qv" target="_blank" rel="noopener noreferrer">
           <div class="social-icon-wrap tt">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 1H12v15.4a2.7 2.7 0 1 1-2.7-2.7c.3 0 .6 0 .9.1V9.1a7.4 7.4 0 0 0-.9-.1A7.3 7.3 0 1 0 16.6 16V8.2a8.4 8.4 0 0 0 4.9 1.6V5.2a4.8 4.8 0 0 1-4.9-4.2Z"/></svg>
           </div>
           <div class="social-name">TikTok</div>
-          <div class="social-handle">Daily short-form content from the road</div>
+          <div class="social-handle">Daily short-form from the workshop &amp; road</div>
         </a>
         <a class="social-btn" href="https://www.instagram.com/brindledoes.things?igsh=c3Y4NWZ4YTQzZGZx" target="_blank" rel="noopener noreferrer">
           <div class="social-icon-wrap ig">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 1.9A3.9 3.9 0 0 0 3.9 7.8v8.4a3.9 3.9 0 0 0 3.9 3.9h8.4a3.9 3.9 0 0 0 3.9-3.9V7.8a3.9 3.9 0 0 0-3.9-3.9H7.8Zm8.8 1.5a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.9A3.1 3.1 0 1 0 12 15a3.1 3.1 0 0 0 0-6.2Z"/></svg>
           </div>
           <div class="social-name">Instagram</div>
-          <div class="social-handle">Photos, reels &amp; stories from the road</div>
+          <div class="social-handle">Photos, reels &amp; stories from the build</div>
         </a>
       </div>
     </div>
@@ -1181,7 +1600,7 @@
       <div>
         <div class="footer-brand">Brindle <span>Does Things</span></div>
         <div class="footer-cause">
-          4,000km for <a href="https://www.mtalk.com.au/" target="_blank" rel="noopener noreferrer">Men's Talk</a> — Men's Mental Health Australia
+          4,000km Perth to Sydney · Solar-assisted rover · Built &amp; documented in full
         </div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
@@ -1189,8 +1608,6 @@
         <a class="btn btn-ghost" href="https://www.tiktok.com/@brindledoesthings?_r=1&_t=ZS-95JTexu56Qv" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">TikTok</a>
         <a class="btn btn-ghost" href="https://www.instagram.com/brindledoes.things?igsh=c3Y4NWZ4YTQzZGZx" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">Instagram</a>
         <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer" style="padding:8px 16px;font-size:12px;">☕ Coffee</a>
-        <!-- ↓ REPLACE href="#" WITH YOUR DONATION PAGE URL -->
-        <a class="btn btn-orange" href="#" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">💚 Donate</a>
       </div>
     </div>
   </footer>
@@ -1205,6 +1622,8 @@
               • Shows the countdown and starts ticking every second, OR
               • Shows the live stats block and fetches data.json
          3. LOAD LIVE STATS — reads data.json and updates the UI.
+         4. ROVER DIAGRAM — hover/focus/click/tap behaviour for the
+            8 interactive hotspots in the rover breakdown section.
 
        LAUNCH_DATE: update this if the start date ever changes.
 
@@ -1307,12 +1726,10 @@
         /* Day counter */
         document.getElementById('stat-day').textContent = 'Day ' + (parseInt(d.current_day) || '—');
 
-        /* Fundraising bar */
-        var raised  = parseFloat(d.total_raised) || 0;
-        var fundPct = Math.min((raised / GOAL_AUD) * 100, 100).toFixed(2);
-        document.getElementById('fund-fill').style.width = fundPct + '%';
-        document.getElementById('stat-raised').innerHTML =
-          fmtMoney(raised) + ' <span style="font-size:1rem;color:var(--text-muted);font-weight:600;">/ $10,000 AUD</span>';
+        /* NOTE: total_raised from data.json is preserved for compatibility
+           with sync_stats.yml. The page no longer exposes a fundraising bar,
+           but the value is still read so the workflow keeps working. */
+        var raised = parseFloat(d.total_raised) || 0;
 
         /* Live location pill */
         elLocPill.textContent = 'Current Location: ' + (d.location || 'En Route');
@@ -1325,6 +1742,156 @@
         if (statusEl) { statusEl.className = 'data-status err'; statusEl.textContent = '⚠️ Stats unavailable — check back soon'; }
       }
     }
+
+    /* ─── 4. Rover diagram hotspot interaction ───────────────────────── */
+    (function () {
+      var diagram = document.getElementById('rover-diagram');
+      var card    = document.getElementById('rover-info');
+      if (!diagram || !card) return;
+
+      var hotspots    = diagram.querySelectorAll('.rover-hotspot');
+      var elKicker    = document.getElementById('rover-info-kicker');
+      var elTitle     = document.getElementById('rover-info-title');
+      var elImageWrap = document.getElementById('rover-info-image');
+      var elDesc      = document.getElementById('rover-info-desc');
+      var elHint      = document.getElementById('rover-info-hint');
+      var btnClose    = document.getElementById('rover-info-close');
+
+      /* Remember the card's default contents so we can restore on close */
+      var DEFAULT_KICKER = elKicker.textContent;
+      var DEFAULT_TITLE  = elTitle.textContent;
+      var DEFAULT_IMAGE  = elImageWrap.innerHTML;
+      var DEFAULT_DESC   = elDesc.innerHTML;
+      var DEFAULT_HINT   = elHint.textContent;
+
+      var lockedBtn  = null; // the hotspot currently pinning the card open
+      var hoveredBtn = null; // the hotspot currently being hovered/focused
+
+      function renderFromButton(btn) {
+        var title = btn.getAttribute('data-title') || '';
+        var desc  = btn.getAttribute('data-desc')  || '';
+        var img   = btn.getAttribute('data-img')   || '';
+
+        elKicker.textContent = 'Rover System';
+        elTitle.textContent  = title;
+        elDesc.textContent   = desc;
+
+        if (img) {
+          elImageWrap.classList.remove('is-empty');
+          elImageWrap.innerHTML = '<img src="' + img + '" alt="' + title.replace(/"/g, '&quot;') + ' component">';
+        } else {
+          elImageWrap.classList.add('is-empty');
+          elImageWrap.textContent = 'No image available';
+        }
+
+        elHint.textContent = 'Enter/Space locks · Esc or × closes';
+      }
+
+      function restoreDefault() {
+        elKicker.textContent  = DEFAULT_KICKER;
+        elTitle.textContent   = DEFAULT_TITLE;
+        elImageWrap.innerHTML = DEFAULT_IMAGE;
+        elImageWrap.classList.add('is-empty');
+        elDesc.innerHTML      = DEFAULT_DESC;
+        elHint.textContent    = DEFAULT_HINT;
+      }
+
+      function setActive(btn) {
+        hotspots.forEach(function (h) { h.classList.remove('is-active'); });
+        if (btn) btn.classList.add('is-active');
+      }
+
+      function lockTo(btn) {
+        lockedBtn = btn;
+        card.setAttribute('data-locked', 'true');
+        renderFromButton(btn);
+        setActive(btn);
+      }
+
+      function unlock() {
+        lockedBtn = null;
+        card.setAttribute('data-locked', 'false');
+        if (hoveredBtn) {
+          renderFromButton(hoveredBtn);
+          setActive(hoveredBtn);
+        } else {
+          restoreDefault();
+          setActive(null);
+        }
+      }
+
+      hotspots.forEach(function (btn) {
+        /* Hover / focus: show temporarily if not locked. */
+        btn.addEventListener('mouseenter', function () {
+          hoveredBtn = btn;
+          if (!lockedBtn) {
+            renderFromButton(btn);
+            setActive(btn);
+          }
+        });
+        btn.addEventListener('mouseleave', function () {
+          hoveredBtn = null;
+          if (!lockedBtn) {
+            restoreDefault();
+            setActive(null);
+          }
+        });
+        btn.addEventListener('focus', function () {
+          hoveredBtn = btn;
+          if (!lockedBtn) {
+            renderFromButton(btn);
+            setActive(btn);
+          }
+        });
+        btn.addEventListener('blur', function () {
+          hoveredBtn = null;
+          if (!lockedBtn) {
+            restoreDefault();
+            setActive(null);
+          }
+        });
+
+        /* Click / tap: lock the card open.
+           Clicking the same active hotspot again toggles it closed. */
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (lockedBtn === btn) {
+            unlock();
+          } else {
+            lockTo(btn);
+          }
+        });
+
+        /* Keyboard: Enter or Space locks. The default button behaviour
+           would fire "click" already, but we keep explicit handling for
+           clarity and so Space doesn't scroll the page. */
+        btn.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            if (lockedBtn === btn) {
+              unlock();
+            } else {
+              lockTo(btn);
+            }
+          }
+        });
+      });
+
+      /* Close button on the card */
+      btnClose.addEventListener('click', function () {
+        unlock();
+      });
+
+      /* Escape closes the locked card from anywhere on the page */
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && lockedBtn) {
+          var toFocus = lockedBtn;
+          unlock();
+          /* Return focus to the hotspot that was open, for keyboard users */
+          if (toFocus && typeof toFocus.focus === 'function') toFocus.focus();
+        }
+      });
+    })();
   </script>
 
 </body>
