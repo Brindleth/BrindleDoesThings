@@ -104,6 +104,15 @@
     }
     .nav-links a:hover { color: var(--text-primary); background: var(--border-dim); }
 
+    /* ── Nav CTA buttons (two compact side-by-side) ── */
+    .nav-cta-group { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+    .nav-cta {
+      padding: 9px 14px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      border-radius: var(--radius-sm);
+    }
+
     /* ====================================================================
        BUTTONS
     ==================================================================== */
@@ -742,18 +751,18 @@
 
     .support-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
       align-items: stretch;
     }
     .support-card {
       background: var(--bg-card);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-mid);
-      padding: 36px;
+      padding: 32px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
       position: relative;
       overflow: hidden;
     }
@@ -761,16 +770,21 @@
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 3px;
     }
-    .support-card.build::before  { background: linear-gradient(90deg, var(--orange), #fbbf24, var(--orange)); }
-    .support-card.follow::before { background: linear-gradient(90deg, var(--green), var(--green-light), var(--green)); }
-    .support-card.build  { border-color: rgba(249,115,22,0.25); }
-    .support-card.follow { border-color: rgba(34,197,94,0.25); }
+    .support-card.cause::before   { background: linear-gradient(90deg, var(--green), var(--green-light), var(--green)); }
+    .support-card.build::before   { background: linear-gradient(90deg, var(--orange), #fbbf24, var(--orange)); }
+    .support-card.follow::before  { background: linear-gradient(90deg, #22c55e, #a3e635, #22c55e); }
+    .support-card.cause   { border-color: rgba(34,197,94,0.35); box-shadow: 0 0 0 1px rgba(34,197,94,0.08); }
+    .support-card.build   { border-color: rgba(249,115,22,0.25); }
+    .support-card.follow  { border-color: rgba(34,197,94,0.22); }
 
     .support-badge {
       display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
       font-family: var(--font-display); font-size: 11px; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase;
       align-self: flex-start;
+    }
+    .support-card.cause .support-badge {
+      background: var(--green-dim); border: 1px solid rgba(34,197,94,0.35); color: var(--green-light);
     }
     .support-card.build .support-badge {
       background: var(--orange-dim); border: 1px solid rgba(249,115,22,0.25); color: var(--orange-light);
@@ -780,17 +794,33 @@
     }
     .support-title {
       font-family: var(--font-display); font-weight: 900;
-      font-size: 2rem; text-transform: uppercase; letter-spacing: 0.02em;
+      font-size: 1.8rem; text-transform: uppercase; letter-spacing: 0.02em;
       color: var(--text-primary); line-height: 1;
     }
-    .support-sub { font-size: 15px; color: var(--text-secondary); line-height: 1.65; }
+    .support-sub { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Small "separate funds" note inside cards */
+    .support-note {
+      margin-top: 4px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed var(--border-mid);
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .support-card.cause .support-note { border-color: rgba(34,197,94,0.28); color: var(--green-light); }
+    .support-card.build .support-note { border-color: rgba(249,115,22,0.28); color: var(--orange-light); }
+
     .support-list {
-      list-style: none; display: flex; flex-direction: column; gap: 10px;
+      list-style: none; display: flex; flex-direction: column; gap: 8px;
       margin-top: 4px;
     }
     .support-list li {
       display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       background: var(--bg-surface);
       border: 1px solid var(--border-dim);
       border-radius: var(--radius-md);
@@ -798,11 +828,33 @@
       color: var(--text-secondary);
     }
     .support-list .bi-icon { font-size: 18px; flex-shrink: 0; line-height: 1; margin-top: 2px; color: var(--orange); }
+    .support-card.cause  .support-list .bi-icon { color: var(--green-light); }
     .support-card.follow .support-list .bi-icon { color: var(--green-light); }
-    .support-list .bi-title { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 2px; }
+    .support-list .bi-title { font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); margin-bottom: 2px; }
     .support-list .bi-desc  { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
     .support-cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 8px; }
+
+    /* ── Separation-of-funds info strip at top of Support section ── */
+    .support-separation {
+      max-width: 820px;
+      margin: 0 auto 40px;
+      padding: 18px 22px;
+      background: rgba(2,6,23,0.6);
+      border: 1px solid var(--border-mid);
+      border-left: 3px solid var(--orange);
+      border-radius: var(--radius-md);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .support-separation-icon {
+      font-size: 22px; line-height: 1.2; flex-shrink: 0; color: var(--orange-light);
+    }
+    .support-separation p {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0;
+    }
+    .support-separation strong { color: var(--text-primary); font-weight: 700; }
 
     .bmac-btn {
       display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: var(--radius-md);
@@ -853,6 +905,7 @@
       .about-grid    { grid-template-columns: 1fr; gap: 40px; }
       .about-portrait { max-width: 480px; margin: 0 auto; width: 100%; aspect-ratio: 16/9; }
       .support-grid  { grid-template-columns: 1fr; }
+      .support-separation { flex-direction: column; gap: 8px; }
       .stat-strip-inner { grid-template-columns: repeat(2,1fr); }
       .stat-block:nth-child(2) { border-right: none; }
       .stat-block:nth-child(3) { border-top: 1px solid var(--border-dim); border-right: 1px solid var(--border-dim); }
@@ -875,6 +928,10 @@
       .social-btn { flex-direction: row; text-align: left; padding: 18px 20px; gap: 16px; }
       .support-card { padding: 24px 20px; }
       .stat-block { padding: 18px 16px; }
+      /* On narrow mobile, hide the Build nav button to save space —
+         the Donate button stays. Both options are still fully accessible
+         in the hero CTA row and the Support section. */
+      .nav-cta-build { display: none; }
     }
   </style>
 </head>
@@ -893,8 +950,19 @@
         <a href="#support">Support</a>
         <a href="#social">Follow</a>
       </div>
-      <!-- ↓ REPLACE href="https://buymeacoffee.com/matthewbriv" IF THE SUPPORT LINK EVER CHANGES -->
-      <a class="btn btn-orange" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer" style="padding: 10px 18px; font-size: 13px; flex-shrink: 0;">☕ Support</a>
+      <!--
+        ↓ NAV CTA BUTTONS
+        • Green "Donate" → replace CAUSE_DONATION_URL with your cause URL.
+        • Orange "Build"  → Buy Me a Coffee for rover/build funding.
+        On mobile (≤640px) the Build button hides to save space; the Donate
+        button stays visible. Both options are still shown clearly in the
+        hero section and the Support section below.
+      -->
+      <div class="nav-cta-group">
+        <!-- ↓ REPLACE "CAUSE_DONATION_URL" WITH YOUR CAUSE DONATION URL -->
+        <a class="btn btn-green nav-cta nav-cta-donate" href="CAUSE_DONATION_URL" target="_blank" rel="noopener noreferrer">💚 Donate</a>
+        <a class="btn btn-orange nav-cta nav-cta-build" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer">☕ Build</a>
+      </div>
     </div>
   </nav>
 
@@ -924,17 +992,17 @@
       </p>
 
       <div class="hero-meta">
-        <div class="meta-chip">🤖 Support rover build</div>
-        <div class="meta-chip">☀️ Solar-assisted electric</div>
+        <div class="meta-chip">🤖 Solar-assisted rover</div>
         <div class="meta-chip">🔋 48V LiFePO4 power</div>
-        <div class="meta-chip">🛠 Engineered &amp; documented</div>
+        <div class="meta-chip">💚 Mental health awareness</div>
+        <div class="meta-chip">🎥 Full build documented</div>
       </div>
 
       <div class="hero-cta-row">
-        <a class="btn btn-orange" href="#support" >☕ Support the Build</a>
-        <!-- Smooth-scrolls to the story section -->
-        <a class="btn btn-ghost" href="#story">Learn More ↓</a>
-        <a class="btn btn-ghost" href="#tracker">📍 Track Live</a>
+        <!-- ↓ REPLACE "CAUSE_DONATION_URL" WITH YOUR CAUSE DONATION URL -->
+        <a class="btn btn-green" href="CAUSE_DONATION_URL" target="_blank" rel="noopener noreferrer">💚 Donate to the Cause</a>
+        <a class="btn btn-orange" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer">☕ Support the Build</a>
+        <a class="btn btn-ghost" href="#rover">See the Rover ↓</a>
       </div>
 
     </div>
@@ -1184,36 +1252,47 @@
   <!-- ================================================================
        ⑤ THE ROVER BUILD — Interactive Breakdown
 
-       HOW TO UPDATE THE MAIN CONCEPT IMAGE:
-         - Drop your latest concept render in at the repo root as
-           `final-rover-design.png` (or change the <img src> below).
+       ─────────────────────────────────────────────────────────────
+       HOW TO UPDATE ROVER IMAGES (Cloudinary)
+       ─────────────────────────────────────────────────────────────
+       All rover image URLs live in one JS config object called
+       ROVER_IMAGES (see bottom of this file, inside <script>).
 
-       HOW TO UPDATE THE 8 COMPONENT IMAGES:
-         - Place the 8 transparent PNGs at the repo root:
-             rover-chassis.png
-             rover-rear-drive.png
-             rover-front-steering.png
-             rover-battery.png
-             rover-solar.png
-             rover-water.png
-             rover-control-electronics.png
-             rover-cargo-filming.png
-         - They are referenced by each hotspot's data-img attribute below.
+       • To swap the main concept image:
+           Edit ROVER_IMAGES.final = "https://res.cloudinary.com/..."
+           The main <img id="rover-main-img"> will pick it up
+           automatically on page load.
 
-       HOW TO MOVE A HOTSPOT:
-         - Each .rover-hotspot has an inline style like:
-             style="--x: 48%; --y: 62%;"
-         - Adjust --x (horizontal, 0%–100%) and --y (vertical, 0%–100%)
-           to line each numbered button up with its part on the concept
-           image. The image is the positioning reference.
+       • To swap a component image:
+           Edit the matching key in ROVER_IMAGES:
+             chassis, rearDrive, frontSteering, battery,
+             solar, water, control, gear
+           No HTML changes needed.
 
-       HOW TO EDIT A ROVER SECTION (title / text):
-         - Each hotspot uses:
-             data-title  — the bold name shown in the info card
-             data-desc   — the technical description shown in the card
-             data-img    — the component PNG shown in the card
-         - Update any of these attributes and the info card updates
-           automatically; no other changes needed.
+       • The hotspot buttons reference components by KEY, not filename:
+             data-img="chassis", data-img="rearDrive", etc.
+           The info-card JS looks up ROVER_IMAGES[key] at display time.
+
+       ─────────────────────────────────────────────────────────────
+       HOW TO MOVE A HOTSPOT
+       ─────────────────────────────────────────────────────────────
+       Each .rover-hotspot has an inline style like:
+           style="--x: 48%; --y: 62%;"
+       --x is horizontal position (0% = left,  100% = right)
+       --y is vertical   position (0% = top,   100% = bottom)
+       Tweak those values until the numbered button sits on the
+       correct part of the concept image.
+
+       ─────────────────────────────────────────────────────────────
+       HOW TO EDIT A ROVER SECTION (title / text)
+       ─────────────────────────────────────────────────────────────
+       Each hotspot uses:
+           data-title — bold name shown in the info card
+           data-desc  — technical description shown in the card
+           data-img   — key that looks up the component URL in
+                        ROVER_IMAGES
+       Update any of these attributes and the info card updates
+       automatically.
   ================================================================ -->
   <section class="section" id="rover">
     <div class="wrap">
@@ -1231,12 +1310,15 @@
 
         <!-- ────────────────────────────────────────────────────────
              MAIN DIAGRAM + HOTSPOTS
-             Replace final-rover-design.png with your latest render.
-             Each numbered button below corresponds to one part of the
-             8-part rover breakdown.
+             The main <img> src is populated from ROVER_IMAGES.final
+             at page load (see JS at bottom of this file).
+             To change the image, edit ROVER_IMAGES.final — NOT here.
         ──────────────────────────────────────────────────────── -->
         <div class="rover-diagram" id="rover-diagram">
-          <img src="final-rover-design.png" alt="AI-generated concept image of the fully built solar-assisted expedition rover showing chassis, wheels, solar panels, battery, electronics and cargo boxes.">
+          <img
+            id="rover-main-img"
+            src="data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 9%22%3E%3C/svg%3E"
+            alt="AI-generated concept image of the fully built solar-assisted expedition rover">
 
           <!-- 1. CHASSIS — centred beneath the frame -->
           <button
@@ -1244,7 +1326,7 @@
             style="--x: 48%; --y: 72%;"
             data-part="chassis"
             data-title="Steel Ladder Chassis"
-            data-img="rover-chassis.png"
+            data-img="chassis"
             data-desc="Low rectangular mild-steel RHS ladder frame. Planned around 50x50x3mm main rails and 40x40x3mm crossmembers, keeping battery, water and electronics low for stability and repairability."
             aria-label="Part 1: Steel Ladder Chassis">
             1<span class="rover-hotspot-label">Chassis</span>
@@ -1256,7 +1338,7 @@
             style="--x: 80%; --y: 48%;"
             data-part="rear-drive"
             data-title="Rear Hub Motor Drive"
-            data-img="rover-rear-drive.png"
+            data-img="rearDrive"
             data-desc="Two rear 48V hub motors provide propulsion. Rear drive improves traction when the rover is loaded, with motor controllers protected inside the electronics bay."
             aria-label="Part 2: Rear Hub Motor Drive">
             2<span class="rover-hotspot-label">Drive</span>
@@ -1268,7 +1350,7 @@
             style="--x: 22%; --y: 52%;"
             data-part="steering"
             data-title="Front Steering System"
-            data-img="rover-front-steering.png"
+            data-img="frontSteering"
             data-desc="Fixed front crossmember with kingpin knuckles, one tie rod, and a central bellcrank driven by a linear actuator. Designed for simple, serviceable steering."
             aria-label="Part 3: Front Steering System">
             3<span class="rover-hotspot-label">Steering</span>
@@ -1280,7 +1362,7 @@
             style="--x: 42%; --y: 60%;"
             data-part="battery"
             data-title="48V LiFePO4 Battery"
-            data-img="rover-battery.png"
+            data-img="battery"
             data-desc="Main energy storage for propulsion and onboard electronics. Planned around a 48V LiFePO4 pack, mounted low and central to reduce rollover risk."
             aria-label="Part 4: 48V LiFePO4 Battery">
             4<span class="rover-hotspot-label">Battery</span>
@@ -1292,7 +1374,7 @@
             style="--x: 64%; --y: 20%;"
             data-part="solar"
             data-title="Solar Charging System"
-            data-img="rover-solar.png"
+            data-img="solar"
             data-desc="Solar-assisted charging using mounted or foldable panels. Solar helps extend daily range but is not treated as the only energy source."
             aria-label="Part 5: Solar Charging System">
             5<span class="rover-hotspot-label">Solar</span>
@@ -1304,7 +1386,7 @@
             style="--x: 26%; --y: 86%;"
             data-part="water"
             data-title="Water Storage"
-            data-img="rover-water.png"
+            data-img="water"
             data-desc="Low-mounted water storage with water-level sensors. Designed for remote sections where water weight, stability and monitoring are critical."
             aria-label="Part 6: Water Storage">
             6<span class="rover-hotspot-label">Water</span>
@@ -1316,7 +1398,7 @@
             style="--x: 52%; --y: 52%;"
             data-part="control"
             data-title="Control Electronics"
-            data-img="rover-control-electronics.png"
+            data-img="control"
             data-desc="Raspberry Pi 5 for interface, logging and high-level control, with an ESP32 or microcontroller for real-time steering and motor control. Includes fused power distribution, DC-DC converters and emergency stop hardware."
             aria-label="Part 7: Control Electronics">
             7<span class="rover-hotspot-label">Control</span>
@@ -1328,7 +1410,7 @@
             style="--x: 80%; --y: 86%;"
             data-part="gear"
             data-title="Cargo &amp; Filming Gear"
-            data-img="rover-cargo-filming.png"
+            data-img="gear"
             data-desc="Storage for tools, repair parts, food, clothing, drone batteries, GoPro batteries, phone power banks and filming equipment for the YouTube journey."
             aria-label="Part 8: Cargo and Filming Gear">
             8<span class="rover-hotspot-label">Gear</span>
@@ -1405,16 +1487,16 @@
               <strong>I am a UK-trained and qualified Electrical &amp; Electronic Engineer</strong> who moved to Australia to rebuild — physically, mentally and technically — after coming through recovery from addiction.
             </p>
             <p>
-              After arriving, I faced immediate hardship: living in my car for three months while working delivery jobs just to survive. No safety net. No support crew. That stretch taught me exactly how much you can engineer your way out of, if you're willing to keep showing up.
+              After arriving, I faced immediate hardship: living in my car for three months while working delivery jobs just to survive. No safety net. No support crew. That stretch taught me exactly how much you can engineer your way out of, if you're willing to keep showing up — and how easily men end up isolated long before anyone notices.
             </p>
             <div class="about-pull-quote">
-              <p>"This project is recovery, endurance and engineering welded into one 4,000km object. If I can build it, I can drive it. If I can drive it, I can finish it — and every step is filmed."</p>
+              <p>"This project is recovery, endurance and engineering welded into one 4,000km object. The build is mine. The awareness — men's mental health, suicide prevention, speaking up before crisis point — is the reason it's being filmed."</p>
             </div>
             <p>
-              This expedition isn't about a distance record. It's about <strong>building something real with my own hands</strong>, then pointing it at the horizon and seeing if it makes it. Every weld, every wiring loom, every kilometre logged is documented — from workshop to finish line.
+              This expedition isn't about a distance record. It's about <strong>building something real with my own hands</strong>, then pointing it at the horizon and seeing if it makes it. Every weld, every wiring loom, every kilometre is documented — from workshop to finish line.
             </p>
             <p>
-              Follow the build. Follow the drive. If the work resonates, support the next stage or share the channel so the story reaches whoever needs it.
+              The bigger reason behind it is simple: men's mental health and suicide awareness. If the build or the drive gets one person to speak up before things reach crisis point, the whole thing was worth welding. Follow along, share the channel, and if you can, donate to the cause or support the build.
             </p>
           </div>
 
@@ -1422,11 +1504,13 @@
             <div class="cred-chip"><span class="ci">⚡</span> Electrical &amp; Electronic Engineer</div>
             <div class="cred-chip"><span class="ci">🇬🇧</span> UK Qualified</div>
             <div class="cred-chip"><span class="ci">🇦🇺</span> Based in Australia</div>
-            <div class="cred-chip"><span class="ci">🛠</span> Self-Reliant Builder</div>
+            <div class="cred-chip"><span class="ci">💚</span> Mental Health Awareness</div>
           </div>
 
           <div style="margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;">
-            <a class="btn btn-orange" href="#support">☕ Support the Build</a>
+            <!-- ↓ REPLACE "CAUSE_DONATION_URL" WITH YOUR CAUSE DONATION URL -->
+            <a class="btn btn-green" href="CAUSE_DONATION_URL" target="_blank" rel="noopener noreferrer">💚 Donate to the Cause</a>
+            <a class="btn btn-orange" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer">☕ Support the Build</a>
             <a class="btn btn-ghost" href="#rover">See the Rover ↓</a>
           </div>
         </div>
@@ -1439,85 +1523,169 @@
 
 
   <!-- ================================================================
-       ⑦ SUPPORT — Two clear options:
-         A) Support the Build — funds rover parts, batteries, solar,
-                                 fabrication, sensors, safety gear
-         B) Follow the Journey — YouTube / TikTok / Instagram /
-                                 documentary updates
-       Buy Me a Coffee remains the personal mission/build link.
+       ⑦ SUPPORT — Three clear options:
+         A) Donate to the Cause  — mental health &amp; suicide awareness.
+                                   Uses CAUSE_DONATION_URL placeholder.
+         B) Support the Build    — funds rover parts, batteries, solar,
+                                   fabrication, sensors, safety, filming.
+                                   Uses Buy Me a Coffee.
+         C) Follow the Journey   — YouTube / TikTok / Instagram /
+                                   documentary updates (free support).
+
+       HOW TO WIRE UP THE CAUSE DONATION LINK:
+         Search the file for CAUSE_DONATION_URL and replace every
+         occurrence with your actual donation page URL.
+
+       Cause donations and build support are completely separate funds.
   ================================================================ -->
   <div class="support-section" id="support">
     <div class="wrap">
 
-      <div class="section-header" style="text-align:center; max-width:720px; margin:0 auto 56px;">
+      <div class="section-header" style="text-align:center; max-width:720px; margin:0 auto 32px;">
         <div class="section-kicker">Back the Mission</div>
-        <h2 class="section-title">Two Ways<br />to Help</h2>
-        <p class="section-desc" style="margin:0 auto;">You can fund the parts that make the rover real, or you can follow the build and drive as it's documented across YouTube, TikTok, Instagram and the long-form documentary.</p>
+        <h2 class="section-title">Three Ways<br />to Help</h2>
+        <p class="section-desc" style="margin:0 auto;">Donate to the cause, help fund the rover build, or follow and share the journey. All three are different — pick whichever one fits.</p>
+      </div>
+
+      <!-- ────────────────────────────────────────────────────────
+           SEPARATION-OF-FUNDS INFO STRIP
+           Makes the split between cause donations and build support
+           visually unmistakable.
+      ──────────────────────────────────────────────────────── -->
+      <div class="support-separation" role="note" aria-label="Separation of funds">
+        <span class="support-separation-icon" aria-hidden="true">⚠️</span>
+        <p>
+          <strong>Cause donations and build support are separate.</strong>
+          Cause donations go toward mental health and suicide awareness.
+          Build support helps fund the rover, equipment and expedition logistics.
+        </p>
       </div>
 
       <div class="support-grid">
 
-        <!-- ═════ A: SUPPORT THE BUILD ═════ -->
+        <!-- ═════ CARD 1: DONATE TO THE CAUSE ═════ -->
+        <!-- ↓ REPLACE "CAUSE_DONATION_URL" (appears twice in this card) WITH YOUR CAUSE DONATION URL -->
+        <div class="support-card cause">
+          <div class="support-badge">💚 Mental Health &amp; Suicide Awareness</div>
+          <div class="support-title">Donate to the Cause</div>
+          <div class="support-sub">
+            This expedition is being built and documented to raise awareness around men's mental health, suicide prevention and the importance of speaking up before things reach crisis point.
+          </div>
+
+          <ul class="support-list">
+            <li>
+              <span class="bi-icon">💚</span>
+              <div>
+                <div class="bi-title">Men's Mental Health</div>
+                <div class="bi-desc">Supporting awareness and access to real conversations about what men actually carry.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">🛟</span>
+              <div>
+                <div class="bi-title">Suicide Prevention</div>
+                <div class="bi-desc">Helping normalise speaking up early — long before things reach crisis point.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">🗣</span>
+              <div>
+                <div class="bi-title">Speaking Up Early</div>
+                <div class="bi-desc">Using the reach of the build and the drive to push the message further.</div>
+              </div>
+            </li>
+          </ul>
+
+          <div class="support-note">
+            Cause donations are separate from build support. 100% of what you donate here goes to the cause — not the rover.
+          </div>
+
+          <div class="support-cta-row">
+            <a class="btn btn-green" href="CAUSE_DONATION_URL" target="_blank" rel="noopener noreferrer" style="width:100%;justify-content:center;">
+              💚 Donate to the Cause
+            </a>
+          </div>
+        </div>
+
+        <!-- ═════ CARD 2: SUPPORT THE BUILD ═════ -->
         <div class="support-card build">
           <div class="support-badge">☕ Build Fund</div>
           <div class="support-title">Support the Build</div>
           <div class="support-sub">
-            Every contribution funds hardware for the rover — the physical things that turn a sketch into a vehicle that can actually cross the country.
+            Every contribution here funds the physical rover and expedition — the hardware, fabrication and logistics that turn a sketch into a vehicle that can actually cross the country.
           </div>
 
           <ul class="support-list">
             <li>
               <span class="bi-icon">🔋</span>
               <div>
-                <div class="bi-title">Batteries &amp; Power System</div>
-                <div class="bi-desc">48V LiFePO4 pack, BMS, fuses, bus bars and DC-DC conversion.</div>
+                <div class="bi-title">48V LiFePO4 Battery System</div>
+                <div class="bi-desc">Main pack, BMS, fuses, bus bars and DC-DC conversion.</div>
               </div>
             </li>
             <li>
               <span class="bi-icon">☀️</span>
               <div>
-                <div class="bi-title">Solar Charging Hardware</div>
-                <div class="bi-desc">Panels, MPPT charge controller, cabling and mounting.</div>
+                <div class="bi-title">Solar Panels &amp; MPPT Charging</div>
+                <div class="bi-desc">Panels, charge controller, cabling and mounting hardware.</div>
               </div>
             </li>
             <li>
               <span class="bi-icon">🛠</span>
               <div>
-                <div class="bi-title">Fabrication &amp; Chassis Parts</div>
-                <div class="bi-desc">Steel RHS, welding consumables, hardware and machining.</div>
+                <div class="bi-title">Steel Chassis &amp; Fabrication</div>
+                <div class="bi-desc">RHS steel, welding consumables, hardware and machining.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">⚙️</span>
+              <div>
+                <div class="bi-title">Hub Motors &amp; Motor Controllers</div>
+                <div class="bi-desc">48V rear hub motors and the controllers that drive them.</div>
               </div>
             </li>
             <li>
               <span class="bi-icon">📟</span>
               <div>
-                <div class="bi-title">Sensors, Control &amp; Safety</div>
+                <div class="bi-title">Sensors, Display, GPS &amp; Safety</div>
                 <div class="bi-desc">Raspberry Pi, microcontrollers, GPS, water-level sensors, E-stop.</div>
+              </div>
+            </li>
+            <li>
+              <span class="bi-icon">🎥</span>
+              <div>
+                <div class="bi-title">Filming &amp; Logistics</div>
+                <div class="bi-desc">Cameras, storage, comms and on-road logistics for documenting the journey.</div>
               </div>
             </li>
           </ul>
 
+          <div class="support-note">
+            Build support funds the rover &amp; expedition — not the cause. For the cause, use the green card.
+          </div>
+
           <div class="support-cta-row">
             <!-- Buy Me a Coffee = personal mission / build support link -->
-            <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer">
+            <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer" style="width:100%;justify-content:center;">
               ☕ Buy Me a Coffee
             </a>
           </div>
         </div>
 
-        <!-- ═════ B: FOLLOW THE JOURNEY ═════ -->
+        <!-- ═════ CARD 3: FOLLOW THE JOURNEY ═════ -->
         <div class="support-card follow">
           <div class="support-badge">📡 Follow the Journey</div>
           <div class="support-title">Follow the Journey</div>
           <div class="support-sub">
-            Support costs nothing — just watching, subscribing and sharing pushes the build and the expedition further. Every platform has a different angle.
+            Free support — just watching, subscribing and sharing pushes the build and the message further. Every platform has a different angle.
           </div>
 
           <ul class="support-list">
             <li>
               <span class="bi-icon">▶</span>
               <div>
-                <div class="bi-title">YouTube — Long-form Build &amp; Documentary</div>
-                <div class="bi-desc">Full episodes covering design, fabrication and the drive itself.</div>
+                <div class="bi-title">YouTube — Build &amp; Documentary</div>
+                <div class="bi-desc">Long-form build episodes and the full end-to-end documentary.</div>
               </div>
             </li>
             <li>
@@ -1532,13 +1700,6 @@
               <div>
                 <div class="bi-title">Instagram — Photos, Reels &amp; Stories</div>
                 <div class="bi-desc">Stills, reels and behind-the-scenes updates from the build.</div>
-              </div>
-            </li>
-            <li>
-              <span class="bi-icon">🎞</span>
-              <div>
-                <div class="bi-title">Full Documentary</div>
-                <div class="bi-desc">The complete story from first weld to Bondi Beach, edited end-to-end.</div>
               </div>
             </li>
           </ul>
@@ -1600,14 +1761,16 @@
       <div>
         <div class="footer-brand">Brindle <span>Does Things</span></div>
         <div class="footer-cause">
-          4,000km Perth to Sydney · Solar-assisted rover · Built &amp; documented in full
+          4,000km Perth to Sydney · Solar-assisted rover · Mental health &amp; suicide awareness
         </div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <!-- ↓ REPLACE "CAUSE_DONATION_URL" WITH YOUR CAUSE DONATION URL -->
+        <a class="btn btn-green" href="CAUSE_DONATION_URL" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">💚 Donate</a>
+        <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer" style="padding:8px 16px;font-size:12px;">☕ Build</a>
         <a class="btn btn-ghost" href="https://youtube.com/@brindledoesthings?si=iw9XXewANBb9wuAi" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">YouTube</a>
         <a class="btn btn-ghost" href="https://www.tiktok.com/@brindledoesthings?_r=1&_t=ZS-95JTexu56Qv" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">TikTok</a>
         <a class="btn btn-ghost" href="https://www.instagram.com/brindledoes.things?igsh=c3Y4NWZ4YTQzZGZx" target="_blank" rel="noopener noreferrer" style="padding:8px 14px;font-size:12px;">Instagram</a>
-        <a class="bmac-btn" href="https://buymeacoffee.com/matthewbriv" target="_blank" rel="noopener noreferrer" style="padding:8px 16px;font-size:12px;">☕ Coffee</a>
       </div>
     </div>
   </footer>
@@ -1744,6 +1907,49 @@
     }
 
     /* ─── 4. Rover diagram hotspot interaction ───────────────────────── */
+
+    /* ════════════════════════════════════════════════════════════════
+       CLOUDINARY IMAGE URLS
+       ────────────────────────────────────────────────────────────────
+       These are the image URLs the rover section uses. They are
+       normal Cloudinary (or any other CDN) URLs — to swap an image,
+       just replace the URL string on its line. No HTML changes needed.
+
+       • `final`  is the main concept render shown behind the hotspots.
+       • The eight component keys (chassis, rearDrive, frontSteering,
+         battery, solar, water, control, gear) correspond to the
+         data-img="..." attribute on each hotspot button above.
+
+       Only `chassis` is a real Cloudinary URL right now.
+       Replace the others by uploading each transparent PNG to
+       Cloudinary and pasting its delivery URL in place.
+       ════════════════════════════════════════════════════════════════ */
+    var ROVER_IMAGES = {
+      final:         "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/FINAL_ROVER_IMAGE.png",
+
+      chassis:       "https://res.cloudinary.com/dcuuh4qeb/image/upload/v1777004911/file_00000000cb6071fa967fdea7988b89a7_1_oqaidr.png",
+
+      rearDrive:     "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/rover-rear-drive.png",
+      frontSteering: "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/rover-front-steering.png",
+      battery:       "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/rover-battery.png",
+      solar:         "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/rover-solar.png",
+      water:         "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/rover-water.png",
+      control:       "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/rover-control-electronics.png",
+      gear:          "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/rover-cargo-filming.png"
+    };
+
+    /* Set the main rover image src from ROVER_IMAGES.final at load.
+       If the URL is still the placeholder or missing, leave it blank
+       rather than 404-ing. */
+    (function () {
+      var mainImg = document.getElementById('rover-main-img');
+      if (!mainImg) return;
+      var url = ROVER_IMAGES.final;
+      if (url && url.indexOf('YOUR_CLOUD_NAME') === -1) {
+        mainImg.src = url;
+      }
+    })();
+
     (function () {
       var diagram = document.getElementById('rover-diagram');
       var card    = document.getElementById('rover-info');
@@ -1768,17 +1974,23 @@
       var hoveredBtn = null; // the hotspot currently being hovered/focused
 
       function renderFromButton(btn) {
-        var title = btn.getAttribute('data-title') || '';
-        var desc  = btn.getAttribute('data-desc')  || '';
-        var img   = btn.getAttribute('data-img')   || '';
+        var title  = btn.getAttribute('data-title') || '';
+        var desc   = btn.getAttribute('data-desc')  || '';
+        var imgKey = btn.getAttribute('data-img')   || '';
+        var imgUrl = ROVER_IMAGES[imgKey];
 
         elKicker.textContent = 'Rover System';
         elTitle.textContent  = title;
         elDesc.textContent   = desc;
 
-        if (img) {
+        /* Treat unreplaced placeholder URLs as "no image" so the card
+           fails gracefully instead of showing a broken image. */
+        var urlIsReal = !!imgUrl && imgUrl.indexOf('YOUR_CLOUD_NAME') === -1;
+
+        if (urlIsReal) {
           elImageWrap.classList.remove('is-empty');
-          elImageWrap.innerHTML = '<img src="' + img + '" alt="' + title.replace(/"/g, '&quot;') + ' component">';
+          elImageWrap.innerHTML =
+            '<img src="' + imgUrl + '" alt="' + title.replace(/"/g, '&quot;') + ' component">';
         } else {
           elImageWrap.classList.add('is-empty');
           elImageWrap.textContent = 'No image available';
